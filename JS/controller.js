@@ -116,58 +116,65 @@ start.addEventListener('click', ()=>{
 
 //AttackButton
 attackBtn.addEventListener('click', ()=>{
-    toggleButtons();
-    attackEnemy(enemy, player)
-        .then(()=>{ 
-            if(enemy.curhealth <= 0){
-                setTimeout(()=>{
-                    var slainLog = `
-                    <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
-                    score += 1;    
-                    log(slainLog);
-                    randomEvent()
-                }, 1000);
-            }
-            else
-            {
-                setTimeout(()=>{
-                    randomBehavior(enemy, player);
-                }, 1000);
-            }
-        })
+    if(!attackBtn.classList.contains("disabled"))
+    {
+        toggleButtons();
+        attackEnemy(enemy, player)
+            .then(()=>{ 
+                if(enemy.curhealth <= 0){
+                    setTimeout(()=>{
+                        var slainLog = `
+                        <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
+                        score += 1;    
+                        log(slainLog);
+                        randomEvent()
+                    }, 1000);
+                }
+                else
+                {
+                    setTimeout(()=>{
+                        randomBehavior(enemy, player);
+                    }, 1000);
+                }
+            })
+    }
 })
 
 //Use Item Button
 itemBtn.addEventListener('click', ()=>{
-    toggleButtons();
-    useItem(player).then(()=>{
-        setTimeout(()=>{
-            randomBehavior(enemy, player);
-        },1000)
-    });
+    if(!attackBtn.classList.contains("disabled")){
+        toggleButtons();
+        useItem(player).then(()=>{
+            setTimeout(()=>{
+                randomBehavior(enemy, player);
+            },1000)
+        });
+    }
 })
 
 //Use Item Button
 skillBtn.addEventListener('click', ()=>{
-    toggleButtons();
-    useSkill(enemy, player)
-        .then(()=>{ 
-            if(enemy.curhealth <= 0){
-                setTimeout(()=>{
-                    var slainLog = `
-                    <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
-                    score += 1;    
-                    log(slainLog);
-                    randomEvent()
-                }, 1000);
-            }
-            else
-            {
-                setTimeout(()=>{
-                    randomBehavior(enemy, player);
-                }, 1000);
-            }
-        })
+    if(!attackBtn.classList.contains("disabled")){
+        toggleButtons();
+        useSkill(enemy, player)
+            .then(()=>{ 
+                if(enemy.curhealth <= 0){
+                    setTimeout(()=>{
+                        var slainLog = `
+                        <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
+                        score += 1;    
+                        log(slainLog);
+                        randomEvent()
+                    }, 1000);
+                }
+                else
+                {
+                    setTimeout(()=>{
+                        randomBehavior(enemy, player);
+                    }, 1000);
+                }
+            })
+    }
 })
 
 //Battle log
