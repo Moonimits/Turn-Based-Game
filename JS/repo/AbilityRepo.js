@@ -78,16 +78,21 @@ export function echoingHit(enemy, player){{
 }}
 // Deals Damage based on max health
 export function bradish(enemy, player){{
-    const bradishDamage = Math.floor(enemy.maxhealth * player.skill.bradish)
-    enemy.curhealth -= bradishDamage
+    const bradishDmg = Math.floor(enemy.maxhealth * player.skill.bradish)
+    enemy.curhealth -= bradishDmg
     updateEnemyHealthBar(enemy)
     var skillLog =`
-        <div><b>You</b> performed a Bradishing Strike, dealt <b>${bradishDamage}dmg</b> (35% MaxHP) to <b id='elog'>${enemy.name}</b>.</div><hr>`;
+        <div><b>You</b> performed a Bradishing Strike, dealt <b>${bradishDmg}dmg</b> (35% MaxHP) to <b id='elog'>${enemy.name}</b>.</div><hr>`;
     log(skillLog)
 }}
-
+//Deals 30 Damage + 80% of missing hp
 export function revengeStrike(enemy, player){{
-
+    const revengeDmg = player.skill.revengeStrike + (Math.floor(player.maxhealth - player.curhealth)*.8)
+    enemy.curhealth -= revengeDmg
+    updateEnemyHealthBar(enemy)
+    var skillLog =`
+        <div><b>You</b> performed a Revenge Strike, dealt <b>${revengeDmg}dmg</b> to <b id='elog'>${enemy.name}</b>.</div><hr>`;
+    log(skillLog)
 }}
 
 export function lacerate(enemy, player){{
