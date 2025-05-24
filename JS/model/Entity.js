@@ -36,7 +36,7 @@ export const specialEnemy = [
     },
 ]
 
-export const enemyPool = [...enemy, ...specialEnemy]
+export const enemyPool = [...enemy, ...enemy, ...enemy, ...specialEnemy]
 
 export function Enemy(name, health, damage, skills, category){
     this.name = name;
