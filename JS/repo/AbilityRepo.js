@@ -1,4 +1,6 @@
 import { log, updateHealthBar, updateEnemyHealthBar } from "../controller.js";
+import { equip } from "./PlayerRepo.js";
+
 export function heal(enemy){
     const heal = enemy.skillSet.heal;
     enemy.curhealth += heal;
@@ -48,6 +50,57 @@ export function vampiricHit(enemy,player){
     log(skillLog);
 }
 
+export function lacerate(enemy, player){{
+    const lacerateDmg = enemy.skillSet.lacerate + Math.floor(player.maxhealth * 0.1)
+    player.curhealth -= lacerateDmg
+    updateHealthBar(player)
+    var skillLog =`
+        <div><b id="elog">${enemy.name}</b> used Lacerate, dealt <b>${lacerateDmg}dmg</b>.</div><hr>`;
+    log(skillLog)
+}}
+
+export function bloodBreak(enemy, player){{
+    const breakDmg = Math.floor(player.maxhealth * enemy.skillSet.bloodBreak)
+    player.curhealth -= breakDmg
+    updateHealthBar(player)
+    var skillLog =`
+        <div><b id="elog">${enemy.name}</b> used Blood Break, dealt <b>${breakDmg}dmg</b> (${enemy.skillSet.bloodBreak * 100}% MaxHP).</div><hr>`;
+    log(skillLog)
+}}
+
+export function healthSteal(enemy, player){{
+    const healthSteal = 10 + Math.floor(player.maxhealth * enemy.skillSet.healthSteal)
+    player.maxhealth -= healthSteal
+    enemy.maxhealth += healthSteal
+    enemy.curhealth += healthSteal
+    if(player.curhealth >= player.maxhealth) player.curhealth = player.maxhealth
+    updateEnemyHealthBar(enemy)
+    updateHealthBar(player)
+    var skillLog =`
+        <div><b id="elog">${enemy.name}</b> used Health Steal, stole <b>${healthSteal}hp</b> (10 + ${enemy.skillSet.healthSteal * 100}% MaxHP) from you and added to its own.</div><hr>`;
+    log(skillLog)
+}}
+
+export function critical(enemy, player){{
+    const critDamage = enemy.damage * enemy.skillSet.critical;
+    player.curhealth -= critDamage
+    updateHealthBar(player);
+    var skillLog = `
+        <div><b id="elog">${enemy.name}</b>  performed a Crit Hit, dealt <b>${critDamage}dmg</b>.</div><hr>`;
+    log(skillLog);
+}}
+
+export function disarm(enemy, player){
+    const disarm = {name: "", damage: 0}
+    const disarmDmg = 10;
+    player.curhealth -= disarmDmg
+    updateHealthBar(player);
+    equip(player, "weapon", disarm);
+    var skillLog = `
+        <div><b id="elog">${enemy.name}</b> disarmed your weapon. dealt <b>${disarmDmg}dmg</b>.</div><hr>`;
+    log(skillLog);
+}
+
 //player Abilities
 export function greaterHeal(enemy, player){
     const heal = player.skill.greaterHeal;
@@ -82,7 +135,7 @@ export function bradish(enemy, player){{
     enemy.curhealth -= bradishDmg
     updateEnemyHealthBar(enemy)
     var skillLog =`
-        <div><b>You</b> performed a Bradishing Strike, dealt <b>${bradishDmg}dmg</b> (35% MaxHP) to <b id='elog'>${enemy.name}</b>.</div><hr>`;
+        <div><b>You</b> performed a Bradishing Strike, dealt <b>${bradishDmg}dmg</b> (${player.skill.bradish * 100}% MaxHP) to <b id='elog'>${enemy.name}</b>.</div><hr>`;
     log(skillLog)
 }}
 //Deals 30 Damage + 80% of missing hp
@@ -95,6 +148,3 @@ export function revengeStrike(enemy, player){{
     log(skillLog)
 }}
 
-export function lacerate(enemy, player){{
-
-}}

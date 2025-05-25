@@ -22,6 +22,9 @@ const cd = document.getElementById('CD');
 const name  = document.getElementById('name');
 const hp    = document.getElementById('hp');
 const dmg   = document.getElementById('dmg');
+const exp   = document.getElementById('exp');
+const expbar= document.getElementById('expbar');
+
 //enemy info
 const ename = document.getElementById('ename');
 const ehp   = document.getElementById('ehp');
@@ -34,7 +37,7 @@ var enemy, player, equipment, itemType;
 export function generateEnemy(){
     const randomizer   = Math.floor(Math.random() * enemyPool.length);
     const entity       = enemyPool[randomizer];
-    enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category);
+    enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp);
     //enemy name style
 
     const enemyDetails = `
@@ -105,6 +108,7 @@ start.addEventListener('click', ()=>{
     name.innerHTML = player.name;
     hp.innerHTML   = player.curhealth;
     dmg.innerHTML  = player.damage;
+    exp.innerHTML  = `${player.exp}/${player.expreq}` 
 
     playerSet.style.display = "none";
     gamelog.style.display   = "block";
@@ -127,6 +131,7 @@ attackBtn.addEventListener('click', ()=>{
                         <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
                         score += 1;    
                         log(slainLog);
+                        updateExp(player, enemy.expval);
                         randomEvent()
                     }, 1000);
                 }
@@ -164,6 +169,7 @@ skillBtn.addEventListener('click', ()=>{
                         <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
                         score += 1;    
                         log(slainLog);
+                        updateExp(player, enemy.expval);
                         randomEvent()
                     }, 1000);
                 }
@@ -229,12 +235,56 @@ export function updateEnemyHealthBar(enemy){
     ehp.innerHTML = enemy.curhealth;
 }
 
+export function updatePlayerDmgLabel(player){
+    dmg.innerHTML = player.damage
+}
+
+export function updateExp(player, experience){
+    player.exp += experience;
+    if(player.exp >= player.expreq){
+        player.exp = player.exp % player.expreq
+        player.level++;
+        player.maxhealth += 10;
+        player.damage += 5;
+        player.curhealth = player.maxhealth;
+        updatePlayerDmgLabel(player)
+
+        const levelLog = `
+            <div><b>You</b> Leveled UP!.</div>
+            <div><b>Current Level:</b> ${player.level}.</div>
+            <div><b>Maxhealth:</b> <span class='posStat'>+10hp</span>.</div>
+            <div><b>Damage:</b> <span class='posStat'>+5dmg</span>.</div>
+            <hr>`;
+
+        log(levelLog)
+        updateHealthBar(player)
+        
+        //delay expbar visual
+        expbar.style.width = `100%`;
+        exp.innerHTML  = `${player.expreq}/${player.expreq}`
+        setTimeout(()=>{
+            expbar.style.width = `0%`;
+            setTimeout(()=>{
+                const expPercent = Math.floor((player.exp/player.expreq)*100);
+                expbar.style.width = `${expPercent}%`;
+                exp.innerHTML  = `${player.exp}/${player.expreq}`
+            }, 500)
+        }, 500)
+    }else{
+        const expPercent = Math.floor((player.exp/player.expreq)*100);
+        expbar.style.width = `${expPercent}%`;
+        exp.innerHTML  = `${player.exp}/${player.expreq}`
+    }
+    
+}
+
 function playerHealthChecker(){
     const gameTracker = setInterval(()=>{
         setTimeout(()=>{
             if(player.curhealth <= 0){
                 gameover.style.display = 'block';
                 gamelog.style.display = 'none'
+                retry.classList.remove('d-none')
                 overMessage.textContent = 'You Lost'
                 overSubMsg.textContent = `Died to a ${enemy.name}`
                 scoreBoard.textContent = `Score: ${score}`

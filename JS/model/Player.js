@@ -16,4 +16,7 @@ export function Player(name, health, damage, heroClass, skill){
 
     //player Utility
     this.skillCd = 0;
+    this.level = 1;
+    this.expreq = 100;
+    this.exp = 0;
 }
