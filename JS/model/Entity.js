@@ -25,17 +25,17 @@ export const enemy = [
 export const specialEnemy = [
     {
         name: "Dragon",    
-        health: 200, 
+        health: 300, 
         damage: 50,  
         exp:35,  
-        skill: {fireball: 75, firebreath: 90}, 
+        skill: {fireball: 90, firebreath: 120}, 
         category: 'elite'
     },
     {
         name: "Hodor", 
-        health: 350,  
-        damage: 45,  
-        skill: {heal:50 , vampiricHit:true}, 
+        health: 400,  
+        damage: 50,  
+        skill: {heal:80 , vampiricHit:true}, 
         category: 'elite',
         exp: 35
     },
@@ -43,13 +43,13 @@ export const specialEnemy = [
         name: "Malphys",           
         health: 250,  
         damage: 90,  
-        skill: {fireball: 75, heal: 70},    
+        skill: {fireball: 80, heal: 100},    
         category: 'elite',
         exp: 35
     },
     {
         name: "A'Rzor",           
-        health: 300,  
+        health: 380,  
         damage: 30,  
         skill: {lacerate: 100, bloodBreak: .40},    
         category: 'elite',
@@ -57,15 +57,15 @@ export const specialEnemy = [
     },
     {
         name: "Luxan Duelist",           
-        health: 150,  
-        damage: 40,  
+        health: 190,  
+        damage: 50,  
         skill: {disarm: true, critical: 3},    
         category: 'elite',
         exp: 25
     },
     {
         name: "BioVoid",           
-        health: 150,  
+        health: 160,  
         damage: 10,  
         skill: {healthSteal: 0.1},    
         category: 'elite',

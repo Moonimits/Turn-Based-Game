@@ -19,6 +19,17 @@
             height: 500px;
             overflow-y: auto;
         }
+        #roundCounter{
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 2px 8px;
+            border: 2px solid red;
+            border-radius: 10px;
+            z-index: 1;
+        }
         .controls{
             width: fit-content;
             margin-top: 8px;    
@@ -48,16 +59,6 @@
         .disabled{
             cursor:not-allowed !important;
             /* pointer-events: auto !important; */
-        }
-        .info{
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            position: absolute;
-            top: 0;
-            right: 0;
-            transform: translate(40%, -40%);
-            border-radius: 100px;
         }
         #exp{
             position: absolute;
@@ -126,8 +127,10 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-center">
-                <div id="battleLog"></div>
+            <div class="d-flex justify-content-center position-relative">
+                <div id="roundCounter">Round</div>
+                <div id="battleLog">
+                </div>
             </div>
             <div class="controls">
                 <button class="btn btn-danger disabled" id="attack">Attack</button>

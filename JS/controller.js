@@ -7,6 +7,7 @@ import { itemPool, weapons, armors } from "./model/Equipment.js";
 const battleLog = document.getElementById('battleLog');
 const selectClass = document.getElementById('heroClass');
 const gameover = document.getElementById('gameover');
+const roundCounter = document.getElementById('roundCounter');
 const scoreBoard = document.getElementById('scoreBoard');
 const overMessage = document.getElementById('overMessage');
 const overSubMsg = document.getElementById('overSubMsg');
@@ -37,7 +38,7 @@ var enemy, player, equipment, itemType;
 
 //================ GAME FUNCTIONS ===========================//
 export function generateEnemy(){
-    round++
+    roundUpdate()
     if(round % 50 == 0) enemyAttr++;   
     increaseEnemyPool(round);
     
@@ -312,6 +313,11 @@ function playerHealthChecker(){
             }
         },2000)
     },100)
+}
+
+function roundUpdate(){
+    round++
+    roundCounter.innerHTML = `Round: ${round}`
 }
 
 
