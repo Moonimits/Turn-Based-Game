@@ -1,4 +1,4 @@
-import { log, updateHealthBar, updateEnemyHealthBar } from "../controller.js";
+import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyDmgLabel } from "../controller.js";
 import { equip } from "./PlayerRepo.js";
 
 export function heal(enemy){
@@ -9,6 +9,17 @@ export function heal(enemy){
     var healLog = `
         <div><b id="elog">${enemy.name}</b> used heal, healed <b id="heal">${heal}hp</b>.</div><hr>`;    
     log(healLog);
+    updateEnemyHealthBar(enemy);
+}
+
+export function rage(enemy){
+    const rage = enemy.skillSet.rage;
+    enemy.damage += rage;
+    
+    var rageLog = `
+        <div><b id="elog">${enemy.name}</b> used Rage, <b>+${rage}dmg</b>.</div><hr>`;    
+    log(rageLog);
+    updateEnemyDmgLabel(enemy)
     updateEnemyHealthBar(enemy);
 }
 

@@ -1,57 +1,75 @@
+import { log } from "../controller.js";
+
 export const enemy = [
-    {name: "Slime",     health: 10,  damage: 5,   exp:3,   skill: {}},
-    {name: "Goblin",    health: 30,  damage: 10,  exp:10,  skill: {jumpslash: 35}},
-    {name: "Bat",       health: 10,  damage: 5,   exp:3,   skill: {}},
-    {name: "Giant Bat", health: 35,  damage: 10,  exp:7,   skill: {vampiricHit: true}},
-    {name: "Jared",     health: 40,  damage: 15,  exp:10,  skill: {jumpslash: 40, heal: 15}},
-    {name: "Mimic",     health: 25,  damage: 14,  exp:10,  skill: {}},
-    {name: "Makusa",    health: 55,  damage: 10,  exp:10,  skill: {heal:20}},
-    {name: "Bugaro",    health: 70,  damage: 5,   exp:10,  skill: {}},
-    {name: "Gulag",     health: 20,  damage: 10,  exp:5,   skill: {}},
-    {name: "Naga",      health: 50,  damage: 15,  exp:15,  skill: {heal: 30, jumpslash: 35}},
-    {name: "Dragon",    health: 200, damage: 50,  exp:35,  skill: {fireball: 75, firebreath: 90}, category: 'elite'},
+    // {name: "Slime",     health: 10,  damage: 5,   exp:10,   skill: {}},
+    // {name: "Grey Bird", health: 10,  damage: 5,   exp:10,   skill: {}},
+    // {name: "Lorigon",   health: 15,  damage: 8,   exp:10,   skill: {}},
+    // {name: "Musicat",   health: 25,  damage: 10,  exp:10,   skill: {}},
+    // {name: "Minitor",   health: 35,  damage: 18,  exp:15,   skill: {jumpslash: 30}},
+    // {name: "Goblin",    health: 30,  damage: 10,  exp:15,  skill: {jumpslash: 35}},
+    // {name: "Bat",       health: 10,  damage: 5,   exp:10,   skill: {}},
+    // {name: "Giant Bat", health: 35,  damage: 10,  exp:20,   skill: {vampiricHit: true}},
+    // {name: "Jared",     health: 40,  damage: 15,  exp:20,  skill: {jumpslash: 40, heal: 15}},
+    // {name: "Mimic",     health: 25,  damage: 14,  exp:15,  skill: {}},
+    {name: "Makusa",    health: 55,  damage: 10,  exp:25,  skill: {heal:20}},
+    // {name: "Bugaro",    health: 70,  damage: 5,   exp:20,  skill: {}},
+    {name: "Heath",     health: 70,  damage: 5,   exp:20,  skill: {heal:20}},
+    // {name: "Gulag",     health: 20,  damage: 10,  exp:10,   skill: {}},
+    // {name: "Lotar",     health: 50,  damage: 18,  exp:20,   skill: {}},
+    // {name: "Wolf Alpha",health: 60,  damage: 20,  exp:25,   skill: {critical: 2}},
+    {name: "Luna",      health: 50,  damage: 18,  exp:20,   skill: {heal:20}, critical: 2},
+    {name: "Naga",      health: 50,  damage: 15,  exp:25,  skill: {heal: 30, jumpslash: 35}},
+    // {name: "Minotor",   health: 70,  damage: 20,  exp:25,  skill: {rage: 10}},
 ];
 
 export const specialEnemy = [
     {
+        name: "Dragon",    
+        health: 200, 
+        damage: 50,  
+        exp:35,  
+        skill: {fireball: 75, firebreath: 90}, 
+        category: 'elite'
+    },
+    {
         name: "Hodor", 
-        health: 250,  
+        health: 350,  
         damage: 45,  
         skill: {heal:50 , vampiricHit:true}, 
         category: 'elite',
-        exp: 50
+        exp: 35
     },
     {
         name: "Malphys",           
-        health: 150,  
+        health: 250,  
         damage: 90,  
         skill: {fireball: 75, heal: 70},    
         category: 'elite',
-        exp: 50
+        exp: 35
     },
     {
         name: "A'Rzor",           
-        health: 200,  
+        health: 300,  
         damage: 30,  
         skill: {lacerate: 100, bloodBreak: .40},    
         category: 'elite',
-        exp: 50
+        exp: 35
     },
     {
         name: "Luxan Duelist",           
-        health: 100,  
+        health: 150,  
         damage: 40,  
         skill: {disarm: true, critical: 3},    
         category: 'elite',
-        exp: 50
+        exp: 25
     },
     {
         name: "BioVoid",           
-        health: 100,  
+        health: 150,  
         damage: 10,  
         skill: {healthSteal: 0.1},    
         category: 'elite',
-        exp: 50
+        exp: 35
     },
     // {
     //     name: "Living Charter",           
@@ -61,17 +79,47 @@ export const specialEnemy = [
     //     category: 'elite',
     //     exp: 50
     // },
+]
+
+export const bosses = [
     {
-        name: "Marco: Game Ender", 
-        health: 9999, 
-        damage: 999, 
-        skill: {heal: 100},               
+        name: "Ultir", 
+        health: 3000, 
+        damage: 100, 
+        skill: {heal: 100, critical: 5},               
         category: 'hack',
-        exp: 100
+        exp: 100,
+    },
+    {
+        name: "Malevolence", 
+        health: 2500, 
+        damage: 100, 
+        skill: {rage: 100},               
+        category: 'hack',
+        exp: 100,
     },
 ]
 
-export const enemyPool = [...enemy, ...enemy, ...specialEnemy]
+export var enemyPool = [...enemy, ...enemy, ...enemy, ...enemy,];
+
+export function increaseEnemyPool(round){
+    var increasePool;
+    if(round % 10 == 0){
+        enemyPool = [...enemyPool, ...specialEnemy];
+        increasePool = `
+            <div class='text-danger fw-bold'>!NUMBER OF SPECIAL ENEMIES INCREASED!</div>
+            <hr>`;
+        log(increasePool);
+    }
+
+    if(round % 50 == 0){
+        enemyPool = [...enemyPool, ...bosses, ...bosses, ...bosses];
+        increasePool = `
+            <div class='text-danger fw-bold'>!NUMBER OF BOSSES INCREASED!</div>
+            <hr>`;
+        log(increasePool);
+    }
+}
 
 export function Enemy(name, health, damage, skills, category, exp){
     this.name = name;

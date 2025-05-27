@@ -1,4 +1,4 @@
-import { enemyPool, Enemy } from "./model/Entity.js";
+import { enemyPool, Enemy, specialEnemy, increaseEnemyPool } from "./model/Entity.js";
 import { heroClass, Player } from "./model/Player.js";
 import { attackEnemy, useItem, equip, useSkill } from "./repo/PlayerRepo.js";
 import { randomBehavior } from "./repo/EntityRepo.js";
@@ -30,11 +30,15 @@ const ename = document.getElementById('ename');
 const ehp   = document.getElementById('ehp');
 const edmg  = document.getElementById('edmg');
 var score   = 0;
+var round = 0;
 var enemy, player, equipment, itemType;
 //================ HTML ELEMENTS ===========================//
 
 //================ GAME FUNCTIONS ===========================//
 export function generateEnemy(){
+    round++
+    increaseEnemyPool(round);
+
     const randomizer   = Math.floor(Math.random() * enemyPool.length);
     const entity       = enemyPool[randomizer];
     enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp);
@@ -131,8 +135,7 @@ attackBtn.addEventListener('click', ()=>{
                         <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
                         score += 1;    
                         log(slainLog);
-                        updateExp(player, enemy.expval);
-                        randomEvent()
+                        updateExp(player, enemy.expval).then(()=>randomEvent())
                     }, 1000);
                 }
                 else
@@ -169,8 +172,7 @@ skillBtn.addEventListener('click', ()=>{
                         <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
                         score += 1;    
                         log(slainLog);
-                        updateExp(player, enemy.expval);
-                        randomEvent()
+                        updateExp(player, enemy.expval).then(()=>randomEvent())
                     }, 1000);
                 }
                 else
@@ -238,44 +240,51 @@ export function updateEnemyHealthBar(enemy){
 export function updatePlayerDmgLabel(player){
     dmg.innerHTML = player.damage
 }
+export function updateEnemyDmgLabel(enemy){
+    edmg.innerHTML = enemy.damage
+}
 
 export function updateExp(player, experience){
-    player.exp += experience;
-    if(player.exp >= player.expreq){
-        player.exp = player.exp % player.expreq
-        player.level++;
-        player.maxhealth += 10;
-        player.damage += 5;
-        player.curhealth = player.maxhealth;
-        updatePlayerDmgLabel(player)
+    return new Promise((resolve)=>{
 
-        const levelLog = `
-            <div><b>You</b> Leveled UP!.</div>
-            <div><b>Current Level:</b> ${player.level}.</div>
-            <div><b>Maxhealth:</b> <span class='posStat'>+10hp</span>.</div>
-            <div><b>Damage:</b> <span class='posStat'>+5dmg</span>.</div>
-            <hr>`;
-
-        log(levelLog)
-        updateHealthBar(player)
-        
-        //delay expbar visual
-        expbar.style.width = `100%`;
-        exp.innerHTML  = `${player.expreq}/${player.expreq}`
-        setTimeout(()=>{
-            expbar.style.width = `0%`;
-            setTimeout(()=>{
-                const expPercent = Math.floor((player.exp/player.expreq)*100);
-                expbar.style.width = `${expPercent}%`;
-                exp.innerHTML  = `${player.exp}/${player.expreq}`
-            }, 500)
-        }, 500)
-    }else{
-        const expPercent = Math.floor((player.exp/player.expreq)*100);
-        expbar.style.width = `${expPercent}%`;
-        exp.innerHTML  = `${player.exp}/${player.expreq}`
-    }
+        player.exp += experience;
+        if(player.exp >= player.expreq){
+            player.exp = player.exp % player.expreq
+            player.level++;
+            player.maxhealth += 10;
+            player.damage += 5;
+            player.curhealth = player.maxhealth;
+            updatePlayerDmgLabel(player)
     
+            const levelLog = `
+                <div><b>You</b> Leveled UP!.</div>
+                <div><b>Current Level:</b> ${player.level}.</div>
+                <div><b>Maxhealth:</b> <span class='posStat'>+10hp</span>.</div>
+                <div><b>Damage:</b> <span class='posStat'>+5dmg</span>.</div>
+                <hr>`;
+    
+            log(levelLog)
+            updateHealthBar(player)
+            
+            //delay expbar visual
+            expbar.style.width = `100%`;
+            exp.innerHTML  = `${player.expreq}/${player.expreq}`
+            setTimeout(()=>{
+                expbar.style.width = `0%`;
+                setTimeout(()=>{
+                    const expPercent = Math.floor((player.exp/player.expreq)*100);
+                    expbar.style.width = `${expPercent}%`;
+                    exp.innerHTML  = `${player.exp}/${player.expreq}`
+                    resolve();
+                }, 500)
+            }, 500)
+        }else{
+            const expPercent = Math.floor((player.exp/player.expreq)*100);
+            expbar.style.width = `${expPercent}%`;
+            exp.innerHTML  = `${player.exp}/${player.expreq}`
+            resolve();
+        }
+    })
 }
 
 function playerHealthChecker(){
@@ -293,5 +302,7 @@ function playerHealthChecker(){
         },2000)
     },100)
 }
+
+
 
 //================ UTILITY ===========================//

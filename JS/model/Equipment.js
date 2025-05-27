@@ -32,7 +32,7 @@ export const specialArmor = [
     {name: "Guraguard",            health: 340, category: 'special'},
     {name: "Black Plating",        health: 310, category: 'special'},
     {name: "Polar Crest",          health: 240, category: 'special'},
-    {name: "Marcosoft: #LifeHack", health: 999, category: 'hack'},
+    {name: "Marcosoft: #LifeHack", health: 500, category: 'hack'},
 ]
 
 export const specialWeapon = [
@@ -43,7 +43,7 @@ export const specialWeapon = [
     {name: "Dragonus",              damage: 60,  category: 'special'},
     {name: "Pxosk",                 damage: 48,  category: 'special'},
     {name: "Wylter Pol",            damage: 35,  category: 'special'},
-    {name: "Marcosoft: #Violence",  damage: 999, category: 'hack'},
+    {name: "Marcosoft: #Violence",  damage: 100, category: 'hack'},
 ]
 
 export const itemPool = {

@@ -16,10 +16,14 @@ export function attack(enemy, player){
 
 export function useSkill(enemy, player){
     var skillSet = Object.keys(enemy.skillSet)
-    const abilityKey = Object.keys(Abilities);
+    var abilityKey = Object.keys(Abilities);
+
+    //Prevent using heal skill when hp is full
+    if(enemy.curhealth == enemy.maxhealth){
+        abilityKey = abilityKey.filter(ability => !(['heal'].includes(ability)));
+    } 
 
     const availableSkill = abilityKey.filter(ability => skillSet.includes(ability));
-    console.log(availableSkill.length)
     const abilityRand = Math.floor(Math.random() * availableSkill.length);
     const selectedSkill = availableSkill[abilityRand];
     Abilities[selectedSkill](enemy, player);
