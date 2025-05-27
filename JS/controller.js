@@ -31,19 +31,30 @@ const ehp   = document.getElementById('ehp');
 const edmg  = document.getElementById('edmg');
 var score   = 0;
 var round = 0;
+var enemyAttr = 0;
 var enemy, player, equipment, itemType;
 //================ HTML ELEMENTS ===========================//
 
 //================ GAME FUNCTIONS ===========================//
 export function generateEnemy(){
     round++
+    if(round % 50 == 0) enemyAttr++;   
     increaseEnemyPool(round);
-
+    
     const randomizer   = Math.floor(Math.random() * enemyPool.length);
     const entity       = enemyPool[randomizer];
     enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp);
-    //enemy name style
+    
+    //if round > 50 increase enemy attributes
+    const additionalHealth = 100 * enemyAttr
+    const additionalDamage = 20 * enemyAttr
+    if(["basic", "elite"].includes(enemy.category)){
+        enemy.maxhealth += additionalHealth
+        enemy.curhealth += additionalHealth
+        enemy.damage += additionalDamage
+    }
 
+    //enemy name style
     const enemyDetails = `
         <div class='text-danger fw-bold'>!ENEMY ENCOUNTERED!</div>
         <div><b>Name:</b> <span class="${enemy.category ?? ''}">${enemy.name}</span></div>
