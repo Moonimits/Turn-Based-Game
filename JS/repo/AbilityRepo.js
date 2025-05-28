@@ -50,6 +50,17 @@ export function jumpslash(enemy,player){
     log(skillLog);
 }
 
+export function venom(enemy,player){
+    const venomDmg = enemy.skillSet.venom.dmg;
+    const duration = enemy.skillSet.venom.dur;
+    player.curhealth -= venomDmg;
+    player.status.push({poison: venomDmg, duration: duration })
+    updateHealthBar(player);
+    var skillLog = `
+        <div><b id="elog">${enemy.name}</b> used <b id='elog'>Poison</b>, <b>You</b> take <b>${venomDmg}dmg</b> for ${duration}.</div><hr>`;
+    log(skillLog);
+}
+
 export function vampiricHit(enemy,player){
     player.curhealth -= enemy.damage;
     enemy.curhealth += enemy.damage;

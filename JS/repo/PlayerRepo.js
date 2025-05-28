@@ -1,8 +1,10 @@
 import { log, updateHealthBar, updateEnemyHealthBar } from "../controller.js";
 import * as Abilities from "./AbilityRepo.js";
+import * as StatusEffect from "./StatusRepo.js";
 
 export function attackEnemy(enemy, player){
     return new Promise((resolve)=>{
+        triggerStatus(player)
         enemy.curhealth -= player.damage;
         updateEnemyHealthBar(enemy);
         var attackLog = `
@@ -15,6 +17,7 @@ export function attackEnemy(enemy, player){
 
 export function useItem(player){
     return new Promise((resolve)=>{
+        triggerStatus(player)
         const heal = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
         player.curhealth += heal;
         player.curhealth = player.curhealth > player.maxhealth ? player.maxhealth : player.curhealth;
@@ -30,6 +33,7 @@ export function useItem(player){
 
 export function useSkill(enemy, player){
     return new Promise((resolve)=>{
+        triggerStatus(player)
         const skill = Object.keys(player.skill);
         const abilities = Object.keys(Abilities);
 
@@ -38,6 +42,21 @@ export function useSkill(enemy, player){
         player.skillCd = player.skill.cd;
         resolve();
     })
+}
+
+export function triggerStatus(player){
+    if(player.status.length){
+        const statuses = player.status
+        statuses.forEach((status) => {
+            const key = Object.keys(status)[0]
+            const tickEffect = StatusEffect[key]
+
+            tickEffect(status[key],player)
+
+            status.duration--
+            player.status = statuses.filter((status) => status.duration != 0)
+        });
+    }
 }
 
 export function equip(player, type, equipment){

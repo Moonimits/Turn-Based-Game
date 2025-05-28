@@ -16,6 +16,7 @@ export const enemy = [
     {name: "Heath",     health: 70,  damage: 5,   exp:20, category: "basic" ,skill: {heal:20}},
     {name: "Gulag",     health: 20,  damage: 10,  exp:10, category: "basic" ,skill: {}},
     {name: "Lotar",     health: 50,  damage: 18,  exp:20, category: "basic" ,skill: {}},
+    {name: "Red Snake", health: 30,  damage: 15,  exp:20, category: "basic" ,skill: {venom: {dmg: 10, dur:5}}},
     {name: "Wolf Alpha",health: 60,  damage: 20,  exp:25, category: "basic" ,skill: {critical: 2}},
     {name: "Luna",      health: 50,  damage: 18,  exp:20, category: "basic" ,skill: {heal:20}, critical: 2},
     {name: "Naga",      health: 50,  damage: 15,  exp:25, category: "basic" ,skill: {heal: 30, jumpslash: 35}},
@@ -103,30 +104,42 @@ export const bosses = [
 export var enemyPool = [...enemy, ...enemy, ...enemy, ...enemy,];
 
 export function increaseEnemyPool(round){
-    var increasePool;
-    if(round % 10 == 0){
-        enemyPool = [...enemyPool, ...specialEnemy];
-        increasePool = `
-            <div class='text-danger fw-bold'>!NUMBER OF SPECIAL ENEMIES INCREASED!</div>
-            <hr>`;
-        log(increasePool);
-    }
+    return new Promise((resolve)=>{
+        var increasePool = null;
+        if(round % 10 == 0){
+            enemyPool = [...enemyPool, ...specialEnemy];
+            increasePool = `
+                <div class='text-danger fw-bold'>!NUMBER OF SPECIAL ENEMIES INCREASED!</div>
+                <hr>`;
+            log(increasePool);
+        }
+    
+        if(round % 50 == 0){
+            enemyPool = [...enemyPool, ...bosses, ...bosses, ...bosses];
+            increasePool = `
+                <div class='text-danger fw-bold'>!NUMBER OF BOSSES INCREASED!</div>
+                <hr>`;
+            log(increasePool);
+        }
 
-    if(round % 50 == 0){
-        enemyPool = [...enemyPool, ...bosses, ...bosses, ...bosses];
-        increasePool = `
-            <div class='text-danger fw-bold'>!NUMBER OF BOSSES INCREASED!</div>
-            <hr>`;
-        log(increasePool);
-    }
+        if(increasePool != null){
+            setTimeout(()=>{resolve()}, 1000)
+        }else{
+            resolve()
+        }
+
+    })
 }
 
-export function Enemy(name, health, damage, skills, category, exp){
-    this.name = name;
-    this.maxhealth = health;
-    this.curhealth = health;
-    this.damage = damage;
-    this.skillSet = skills;
-    this.category = category;
-    this.expval = exp;
+export class Enemy{
+    constructor(name, health, damage, skills, category, exp){
+        this.name = name;
+        this.maxhealth = health;
+        this.curhealth = health;
+        this.damage = damage;
+        this.skillSet = skills;
+        this.category = category;
+        this.expval = exp;
+        this.status
+    }
 }
