@@ -115,7 +115,7 @@ export function increaseEnemyPool(round){
         }
     
         if(round % 50 == 0){
-            enemyPool = [...enemyPool, ...bosses, ...bosses, ...bosses];
+            enemyPool = [...enemyPool, ...bosses, ...bosses,]
             increasePool = `
                 <div class='text-danger fw-bold'>!NUMBER OF BOSSES INCREASED!</div>
                 <hr>`;
