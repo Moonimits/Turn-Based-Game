@@ -1,4 +1,4 @@
-import { log, updateHealthBar, updateEnemyHealthBar } from "../controller.js";
+import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyStatusLabel, updatePlayerStatusLabel } from "../controller.js";
 import * as Abilities from "./AbilityRepo.js";
 import * as StatusEffect from "./StatusRepo.js";
 
@@ -57,6 +57,7 @@ export function triggerStatus(player){
             player.status = statuses.filter((status) => status.duration != 0)
         });
     }
+    updatePlayerStatusLabel(player)
 }
 
 export function equip(player, type, equipment){

@@ -15,7 +15,7 @@ export const enemy = [
     {name: "Bugaro",    health: 70,  damage: 5,   exp:20, category: "basic" ,skill: {}},
     {name: "Heath",     health: 70,  damage: 5,   exp:20, category: "basic" ,skill: {heal:20}},
     {name: "Gulag",     health: 20,  damage: 10,  exp:10, category: "basic" ,skill: {}},
-    {name: "Lotar",     health: 50,  damage: 18,  exp:20, category: "basic" ,skill: {}},
+    {name: "Lotar",     health: 50,  damage: 18,  exp:20, category: "basic" ,skill: {regeneration: 5}},
     {name: "Red Snake", health: 30,  damage: 15,  exp:20, category: "basic" ,skill: {venom: {dmg: 10, dur:5}}},
     {name: "Wolf Alpha",health: 60,  damage: 20,  exp:25, category: "basic" ,skill: {critical: 2}},
     {name: "Luna",      health: 50,  damage: 18,  exp:20, category: "basic" ,skill: {heal:20}, critical: 2},
@@ -36,7 +36,7 @@ export const specialEnemy = [
         name: "Hodor", 
         health: 400,  
         damage: 50,  
-        skill: {heal:80 , vampiricHit:true}, 
+        skill: {heal:80, regeneration: 20, vampiricHit:true}, 
         category: 'elite',
         exp: 35
     },
@@ -140,6 +140,6 @@ export class Enemy{
         this.skillSet = skills;
         this.category = category;
         this.expval = exp;
-        this.status
+        this.status = []
     }
 }

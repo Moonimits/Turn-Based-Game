@@ -10,7 +10,22 @@ export function poison(dmg, target){
         updateEnemyHealthBar(target)
     }
 }
-export function burn(dmg, duration, target){}
+export function burn(dmg, target){
+    target.curhealth -= dmg
+    if(target instanceof Player){
+        updateHealthBar(target)
+    }else{
+        updateEnemyHealthBar(target)
+    }
+}
+export function regen(amount, target){
+    target.curhealth += amount
+    target.curhealth = target.curhealth > target.maxhealth ? target.maxhealth : target.curhealth;
+    if(target instanceof Player){
+        updateHealthBar(target)
+    }else{
+        updateEnemyHealthBar(target)
+    }
+}
 export function strength(dmg, duration, target){}
 export function resistance(block, duration, target){}
-export function regen(amount, duration, target){}

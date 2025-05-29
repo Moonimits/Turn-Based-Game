@@ -1,5 +1,6 @@
-import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyDmgLabel } from "../controller.js";
+import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyDmgLabel, updatePlayerStatusLabel, updateEnemyStatusLabel } from "../controller.js";
 import { equip } from "./PlayerRepo.js";
+import { Player } from "../model/Player.js";
 
 export function heal(enemy){
     const heal = enemy.skillSet.heal;
@@ -26,6 +27,7 @@ export function rage(enemy){
 export function fireball(enemy,player){
     const skillDmg = enemy.skillSet.fireball;
     player.curhealth -= skillDmg;
+    if(probability(30)) inflictStatus(player, {burn: 25, duration: 3, lbl:"BRN"})
     updateHealthBar(player);
     var skillLog = `
         <div><b id="elog">${enemy.name}</b> used <b id='elog'>FireBall</b>, dealt <b>${skillDmg}dmg</b>.</div><hr>`;
@@ -35,6 +37,7 @@ export function fireball(enemy,player){
 export function firebreath(enemy,player){
     const skillDmg = enemy.skillSet.firebreath;
     player.curhealth -= skillDmg;
+    if(probability(50)) inflictStatus(player, {burn: 35, duration: 3, lbl:"BRN"})
     updateHealthBar(player);
     var skillLog = `
         <div><b id="elog">${enemy.name}</b> used <b id='elog'>Firebreath</b>, dealt <b>${skillDmg}dmg</b>.</div><hr>`;
@@ -54,10 +57,21 @@ export function venom(enemy,player){
     const venomDmg = enemy.skillSet.venom.dmg;
     const duration = enemy.skillSet.venom.dur;
     player.curhealth -= venomDmg;
-    player.status.push({poison: venomDmg, duration: duration })
+    inflictStatus(player, {poison: venomDmg, duration: duration, lbl:"PSN"})
     updateHealthBar(player);
     var skillLog = `
         <div><b id="elog">${enemy.name}</b> used <b id='elog'>Poison</b>, <b>You</b> take <b>${venomDmg}dmg</b> for ${duration}.</div><hr>`;
+    log(skillLog);
+}
+
+export function regeneration(enemy){
+    const regen = enemy.skillSet.regeneration
+    enemy.curhealth += regen
+    enemy.curhealth = enemy.curhealth > enemy.maxhealth ? enemy.maxhealth : enemy.curhealth;
+    inflictStatus(enemy, {regen: regen, duration: 4, lbl:"RGN"})
+    updateEnemyHealthBar(enemy)
+    var skillLog = `
+        <div><b id="elog">${enemy.name}</b> used <b id='elog'>Regeneration</b> healing ${regen}hp for 4 Turns.</div><hr>`;
     log(skillLog);
 }
 
@@ -170,3 +184,28 @@ export function revengeStrike(enemy, player){{
     log(skillLog)
 }}
 
+export function probability(percent){
+    return (Math.random() < (percent / 100))
+}
+
+export function inflictStatus(target, newStatus){
+    const statuses = target.status
+    const newStatusName = Object.keys(newStatus)[0]//Index 0 is always the name
+    let exists = false
+
+    statuses.forEach(status => {
+        const statusName = Object.keys(status)[0]
+        if(statusName === newStatusName) {
+            status.duration = newStatus.duration
+            exists = true;
+        }
+    });
+
+    if(!exists) target.status.push(newStatus)
+
+    if(target instanceof Player){
+        updatePlayerStatusLabel(target)
+    }else{
+        updateEnemyStatusLabel(target)
+    }
+}

@@ -1,5 +1,6 @@
-import { log, toggleButtons, updateHealthBar } from "../controller.js";
+import { log, toggleButtons, updateEnemyStatusLabel, updateHealthBar } from "../controller.js";
 import * as Abilities from "./AbilityRepo.js";
+import * as StatusEffect from "./StatusRepo.js";
 
 const actions = {
     attack: (enemy, player) => attack(enemy, player),
@@ -38,6 +39,23 @@ export function randomBehavior(enemy, player){
     })
     const rand = Math.floor(Math.random() * filteredActions.length);
     const selectedAction = filteredActions[rand];
+    triggerStatus(enemy)
     actions[selectedAction](enemy,player);
     toggleButtons();
+}
+
+function triggerStatus(enemy){
+    if(enemy.status.length){
+        const statuses = enemy.status
+        statuses.forEach((status) => {
+            const key = Object.keys(status)[0]
+            const tickEffect = StatusEffect[key]
+
+            tickEffect(status[key],enemy)
+
+            status.duration--
+            enemy.status = statuses.filter((status) => status.duration != 0)
+        });
+    }
+    updateEnemyStatusLabel(enemy)
 }

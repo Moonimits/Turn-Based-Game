@@ -23,6 +23,7 @@ const cd = document.getElementById('CD');
 const name  = document.getElementById('name');
 const hp    = document.getElementById('hp');
 const dmg   = document.getElementById('dmg');
+const st   = document.getElementById('st');
 const exp   = document.getElementById('exp');
 const expbar= document.getElementById('expbar');
 
@@ -30,6 +31,7 @@ const expbar= document.getElementById('expbar');
 const ename = document.getElementById('ename');
 const ehp   = document.getElementById('ehp');
 const edmg  = document.getElementById('edmg');
+const est  = document.getElementById('est');
 var score   = 0;
 var round = 0;
 var enemyAttr = 0;
@@ -149,6 +151,7 @@ attackBtn.addEventListener('click', ()=>{
                         <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
                         score += 1;    
                         log(slainLog);
+                        est.innerHTML = ''
                         updateExp(player, enemy.expval).then(()=>randomEvent())
                     }, 1000);
                 }
@@ -174,7 +177,7 @@ itemBtn.addEventListener('click', ()=>{
     }
 })
 
-//Use Item Button
+//Use Skill Button
 skillBtn.addEventListener('click', ()=>{
     if(!attackBtn.classList.contains("disabled")){
         toggleButtons();
@@ -186,6 +189,7 @@ skillBtn.addEventListener('click', ()=>{
                         <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
                         score += 1;    
                         log(slainLog);
+                        est.innerHTML = ''
                         updateExp(player, enemy.expval).then(()=>randomEvent())
                     }, 1000);
                 }
@@ -256,6 +260,22 @@ export function updatePlayerDmgLabel(player){
 }
 export function updateEnemyDmgLabel(enemy){
     edmg.innerHTML = enemy.damage
+}
+export function updatePlayerStatusLabel(player){
+    const statuses = player.status
+    var statusIcons = ''
+    statuses.forEach(status => {
+        statusIcons += `<div class="status ${status.lbl}">${status.lbl}</div>`
+    });
+    st.innerHTML = statusIcons
+}
+export function updateEnemyStatusLabel(enemy){
+    const statuses = enemy.status
+    var statusIcons = ''
+    statuses.forEach(status => {
+        statusIcons += `<div class="status ${status.lbl}">${status.lbl}</div>`
+    });
+    est.innerHTML = statusIcons
 }
 
 export function updateExp(player, experience){
