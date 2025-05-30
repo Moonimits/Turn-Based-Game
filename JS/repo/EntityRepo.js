@@ -48,7 +48,6 @@ export function randomBehavior(enemy, player){
     const selectedAction = filteredActions[rand];
     triggerStatus(enemy)
     actions[selectedAction](enemy,player);
-    console.log(enemy.status)
     toggleButtons();
 }
 
