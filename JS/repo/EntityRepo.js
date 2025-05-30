@@ -32,9 +32,16 @@ export function useSkill(enemy, player){
 
 export function randomBehavior(enemy, player){
     const actionKeys = Object.keys(actions);
+    var skillSet = Object.keys(enemy.skillSet)
+
+
+    //Prevent using heal skill when hp is full
+    if(enemy.curhealth == enemy.maxhealth){
+        skillSet = skillSet.filter(skill => !(['heal'].includes(skill)));
+    } 
 
     const filteredActions = actionKeys.filter((actionKey)=>{
-        if(actionKey === 'skill' && Object.keys(enemy.skillSet).length == 0) return false;
+        if(actionKey === 'skill' && Object.keys(skillSet).length == 0) return false;
         return true;
     })
     const rand = Math.floor(Math.random() * filteredActions.length);
