@@ -1,6 +1,8 @@
 import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyDmgLabel, updatePlayerStatusLabel, updateEnemyStatusLabel } from "../controller.js";
 import { equip } from "./PlayerRepo.js";
 import { Player } from "../model/Player.js";
+import { strength } from "./StatusRepo.js";
+import { attack } from "./EntityRepo.js";
 
 export function heal(enemy){
     const heal = enemy.skillSet.heal;
@@ -13,9 +15,18 @@ export function heal(enemy){
     updateEnemyHealthBar(enemy);
 }
 
-export function rage(enemy){
+export function rage(enemy, player){
     const rage = enemy.skillSet.rage;
-    enemy.damage += rage;
+    const strengthStatus = enemy.status.find(stat => stat.strength)
+    
+    //If strength status exist just attack
+    if(!strengthStatus){ 
+        enemy.damage += rage; 
+        inflictStatus(enemy, {strength: rage, duration: 3, lbl:"ATK+"})
+    }else{
+        attack(enemy,player);
+        return false;
+    }
     
     var rageLog = `
         <div><b id="elog">${enemy.name}</b> used Rage, <b>+${rage}dmg</b>.</div><hr>`;    

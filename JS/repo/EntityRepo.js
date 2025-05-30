@@ -48,6 +48,7 @@ export function randomBehavior(enemy, player){
     const selectedAction = filteredActions[rand];
     triggerStatus(enemy)
     actions[selectedAction](enemy,player);
+    console.log(enemy.status)
     toggleButtons();
 }
 
@@ -57,11 +58,11 @@ function triggerStatus(enemy){
         statuses.forEach((status) => {
             const key = Object.keys(status)[0]
             const tickEffect = StatusEffect[key]
-
-            tickEffect(status[key],enemy)
-
-            status.duration--
+            
+            
+            tickEffect(status,enemy)
             enemy.status = statuses.filter((status) => status.duration != 0)
+            status.duration--
         });
     }
     updateEnemyStatusLabel(enemy)
