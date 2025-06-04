@@ -18,11 +18,9 @@ export function heal(enemy){
 export function rage(enemy, player){
     const rage = enemy.skillSet.rage;
     const strengthStatus = enemy.status.find(stat => stat.strength)
-    
     //If strength status exist just attack
     if(!strengthStatus){ 
-        enemy.damage += rage; 
-        inflictStatus(enemy, {strength: rage, duration: 3, lbl:"ATK+"})
+        inflictStatus(enemy, {strength: rage, duration: 3, lbl:"ATK+", applied: false})
     }else{
         attack(enemy,player);
         return false;
@@ -120,6 +118,7 @@ export function healthSteal(enemy, player){{
     player.maxhealth -= healthSteal
     enemy.maxhealth += healthSteal
     enemy.curhealth += healthSteal
+    if(probability(50)) inflictStatus(enemy, {regen:10, duration: 5, lbl: "RGN"})
     if(player.curhealth >= player.maxhealth) player.curhealth = player.maxhealth
     updateEnemyHealthBar(enemy)
     updateHealthBar(player)
@@ -162,6 +161,7 @@ export function greaterHeal(enemy, player){
 export function critHit(enemy, player){{
     const critDamage = player.damage * player.skill.critHit;
     enemy.curhealth -= critDamage
+    if(probability(30)) inflictStatus(enemy, {poison: 20, duration: 3, lbl:"PSN"})
     updateEnemyHealthBar(enemy);
     var skillLog = `
         <div><b>You</b> performed a Crit Hit, <b id='elog'>${enemy.name}</b> suffered <b>${critDamage}dmg</b>.</div><hr>`;

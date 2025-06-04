@@ -34,7 +34,6 @@ export function randomBehavior(enemy, player){
     const actionKeys = Object.keys(actions);
     var skillSet = Object.keys(enemy.skillSet)
 
-
     //Prevent using heal skill when hp is full
     if(enemy.curhealth == enemy.maxhealth){
         skillSet = skillSet.filter(skill => !(['heal'].includes(skill)));
@@ -46,8 +45,8 @@ export function randomBehavior(enemy, player){
     })
     const rand = Math.floor(Math.random() * filteredActions.length);
     const selectedAction = filteredActions[rand];
-    triggerStatus(enemy)
     actions[selectedAction](enemy,player);
+    triggerStatus(enemy)
     toggleButtons();
 }
 

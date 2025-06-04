@@ -145,20 +145,16 @@ attackBtn.addEventListener('click', ()=>{
         toggleButtons();
         attackEnemy(enemy, player)
             .then(()=>{ 
-                if(enemy.curhealth <= 0){
-                    setTimeout(()=>{
-                        var slainLog = `
-                        <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
-                        score += 1;    
-                        log(slainLog);
-                        est.innerHTML = ''
-                        updateExp(player, enemy.expval).then(()=>randomEvent())
-                    }, 1000);
+                if(enemy.curhealth <= 0){        
+                    handleDefeatEnemy(enemy, player);
                 }
                 else
                 {
                     setTimeout(()=>{
                         randomBehavior(enemy, player);
+                        if(enemy.curhealth <= 0){
+                            handleDefeatEnemy(enemy, player)
+                        }
                     }, 1000);
                 }
             })
@@ -172,6 +168,9 @@ itemBtn.addEventListener('click', ()=>{
         useItem(player).then(()=>{
             setTimeout(()=>{
                 randomBehavior(enemy, player);
+                if(enemy.curhealth <= 0){
+                    handleDefeatEnemy(enemy, player)
+                }
             },1000)
         });
     }
@@ -184,19 +183,15 @@ skillBtn.addEventListener('click', ()=>{
         useSkill(enemy, player)
             .then(()=>{ 
                 if(enemy.curhealth <= 0){
-                    setTimeout(()=>{
-                        var slainLog = `
-                        <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
-                        score += 1;    
-                        log(slainLog);
-                        est.innerHTML = ''
-                        updateExp(player, enemy.expval).then(()=>randomEvent())
-                    }, 1000);
+                    handleDefeatEnemy(enemy, player)
                 }
                 else
                 {
                     setTimeout(()=>{
                         randomBehavior(enemy, player);
+                        if(enemy.curhealth <= 0){
+                            handleDefeatEnemy(enemy, player)
+                        }
                     }, 1000);
                 }
             })
@@ -276,6 +271,19 @@ export function updateEnemyStatusLabel(enemy){
         statusIcons += `<div class="status ${status.lbl}">${status.lbl}</div>`
     });
     est.innerHTML = statusIcons
+}
+
+export function handleDefeatEnemy(enemy, player){
+    attackBtn.classList.add("disabled")
+    itemBtn.classList.add("disabled")
+    setTimeout(()=>{
+        var slainLog = `
+        <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
+        score += 1;    
+        log(slainLog);
+        est.innerHTML = ''
+        updateExp(player, enemy.expval).then(()=>randomEvent())
+    }, 1000);
 }
 
 export function updateExp(player, experience){
