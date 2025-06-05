@@ -57,7 +57,6 @@ function triggerStatus(enemy){
             const key = Object.keys(status)[0]
             const tickEffect = StatusEffect[key]
             
-            
             tickEffect(status,enemy)
             enemy.status = statuses.filter((status) => status.duration != 0)
             status.duration--

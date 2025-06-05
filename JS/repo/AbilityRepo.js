@@ -147,9 +147,10 @@ export function disarm(enemy, player){
     log(skillLog);
 }
 
+
 //player Abilities
 export function greaterHeal(enemy, player){
-    const heal = player.skill.greaterHeal;
+    const heal = player.skill.greaterHeal.val;
     player.curhealth += heal;
     player.curhealth = player.curhealth > player.maxhealth ? player.maxhealth : player.curhealth;
     
@@ -159,39 +160,43 @@ export function greaterHeal(enemy, player){
     updateHealthBar(player);
 }
 export function critHit(enemy, player){{
-    const critDamage = player.damage * player.skill.critHit;
+    const critHit = player.skill.critHit
+    const critDamage = player.damage * critHit.val;
     enemy.curhealth -= critDamage
     if(probability(30)) inflictStatus(enemy, {poison: 20, duration: 3, lbl:"PSN"})
     updateEnemyHealthBar(enemy);
     var skillLog = `
-        <div><b>You</b> performed a Crit Hit, <b id='elog'>${enemy.name}</b> suffered <b>${critDamage}dmg</b>.</div><hr>`;
+        <div><b>You</b> performed a ${critHit.name}, <b id='elog'>${enemy.name}</b> suffered <b>${critDamage}dmg</b>.</div><hr>`;
     log(skillLog);
 }}
 export function echoingHit(enemy, player){{
-    const echo = Math.floor(Math.random() * (player.skill.echoingHit - 1 + 1) + 1);
+    const echoingHit = player.skill.echoingHit
+    const echo = Math.floor(Math.random() * (echoingHit.val - 1 + 1) + 1);
     const echoHit = player.damage * echo;
     enemy.curhealth -= echoHit
     updateEnemyHealthBar(enemy);
     var skillLog = `
-        <div><b>You</b> performed a Echoing Hit, your hit echoed <b>${echo}x</b>, dealt <b>${echoHit}dmg</b> to <b id='elog'>${enemy.name}</b>.</div><hr>`;
+        <div><b>You</b> performed a ${echoingHit.name}, your hit echoed <b>${echo}x</b>, dealt <b>${echoHit}dmg</b> to <b id='elog'>${enemy.name}</b>.</div><hr>`;
     log(skillLog);
 }}
 // Deals Damage based on max health
 export function bradish(enemy, player){{
-    const bradishDmg = Math.floor(enemy.maxhealth * player.skill.bradish)
+    const bradish = player.skill.bradish
+    const bradishDmg = Math.floor(enemy.maxhealth * bradish.val)
     enemy.curhealth -= bradishDmg
     updateEnemyHealthBar(enemy)
     var skillLog =`
-        <div><b>You</b> performed a Bradishing Strike, dealt <b>${bradishDmg}dmg</b> (${player.skill.bradish * 100}% MaxHP) to <b id='elog'>${enemy.name}</b>.</div><hr>`;
+        <div><b>You</b> performed a ${bradish.name}, dealt <b>${bradishDmg}dmg</b> (${bradish.val * 100}% MaxHP) to <b id='elog'>${enemy.name}</b>.</div><hr>`;
     log(skillLog)
 }}
 //Deals 30 Damage + 80% of missing hp
 export function revengeStrike(enemy, player){{
-    const revengeDmg = player.skill.revengeStrike + (Math.floor(player.maxhealth - player.curhealth)*.8)
+    const revengeStrike = player.skill.revengeStrike
+    const revengeDmg = revengeStrike.val + (Math.floor(player.maxhealth - player.curhealth)*.8)
     enemy.curhealth -= revengeDmg
     updateEnemyHealthBar(enemy)
     var skillLog =`
-        <div><b>You</b> performed a Revenge Strike, dealt <b>${revengeDmg}dmg</b> to <b id='elog'>${enemy.name}</b>.</div><hr>`;
+        <div><b>You</b> performed a ${revengeStrike.name}, dealt <b>${revengeDmg}dmg</b> to <b id='elog'>${enemy.name}</b>.</div><hr>`;
     log(skillLog)
 }}
 

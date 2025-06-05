@@ -41,4 +41,5 @@ export function strength(status, target){
         updateEnemyDmgLabel(target)
     }
 }
+export function bleed(status, target){}
 export function resistance(status, target){}

@@ -4,6 +4,9 @@ import { attackEnemy, useItem, equip, useSkill } from "./repo/PlayerRepo.js";
 import { randomBehavior } from "./repo/EntityRepo.js";
 import { itemPool, weapons, armors } from "./model/Equipment.js";
 //================ HTML ELEMENTS ===========================//
+const classSummary = document.getElementById("classSummary");
+const tableSummary = document.getElementById("tableSummary");
+const selectBox = document.getElementById("selectBox");
 const battleLog = document.getElementById('battleLog');
 const selectClass = document.getElementById('heroClass');
 const gameover = document.getElementById('gameover');
@@ -117,10 +120,67 @@ function randomEvent(){
     runEvent();
 }
 
+function handleClassSelect(e){
+    const select = e.target
+    if(select.className == "selectClass"){
+        const selected = document.getElementsByClassName("selected")[0]
+        const classId = select.dataset.id;
+        const classDetails = heroClass[classId]
+        const skillKey = Object.keys(classDetails.skill)[0]
+        const classSkill = classDetails.skill[skillKey]
+
+        if(selected) selected.classList.remove("selected")
+        select.classList.add("selected")
+        selectClass.value = classId
+
+        classSummary.classList.remove("d-none")
+        classSummary.children[0].classList.add("hide")
+        setTimeout(() => {
+            classSummary.children[0].classList.remove("hide")
+            const tableBody = `
+                <tbody>
+                    <tr>
+                        <td class="fw-bold">Class:</td>
+                        <td>${classDetails.class}</td>
+                        <td class="fw-bold">Skill:</td>
+                        <td>${classSkill.name}</td>
+                        <td class="fw-bold">Cooldown:</td>
+                        <td>${classDetails.skill.cd} Turns</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Health:</td><td style='color:green'>${classDetails.health}hp</td>
+                        <td rowspan="4" colspan="4">
+                            ${classSkill.desc}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Damage:</td><td style='color:red'>${classDetails.damage}dmg</td>
+                    </tr>
+                </tbody>
+            `;
+            tableSummary.innerHTML = tableBody;
+        }, 700)
+    }
+}
+//Build Start
+selectBox.innerHTML = heroClass.map((hero, index)=>{
+    return `<div class="selectClass" data-id=${index}>${hero.class}</div>`
+}).join('');
+
+document.addEventListener("click", handleClassSelect)
+
 //Game Start
 start.addEventListener('click', ()=>{
-    const playerName    = document.getElementById('username').value;
-    const playerClass   = document.getElementById('heroClass').value;
+    const playerNameInput    = document.getElementById('username');
+    const playerClassInput   = document.getElementById('heroClass');
+    const playerName    = playerNameInput.value;
+    const playerClass   = playerClassInput.value;
+    
+    if(playerName == ''){
+        playerNameInput.focus()
+        return false;
+    }
+
     
     const Class  = heroClass[playerClass];
     player = new Player(playerName, Class.health, Class.damage, Class.class, Class.skill);
@@ -210,12 +270,6 @@ battleLog.addEventListener('click', function(e){
         randomEvent();
     }
 })
-
-//create options in the class
-const options = heroClass.map((hero, index) => {
-    return`<option value = '${index}'>${hero.class}</option>`
-}).join()
-selectClass.innerHTML += options;
 //================ GAME FUNCTIONS ===========================//
 
 //================ UTILITY ===========================//

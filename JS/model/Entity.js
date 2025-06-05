@@ -1,16 +1,16 @@
 import { log } from "../controller.js";
 
 export const enemy = [
-    {name: "Slime",     health: 10,  damage: 5,   exp:10, category: "basic" ,skill: {}},
-    {name: "Grey Bird", health: 10,  damage: 5,   exp:10, category: "basic" ,skill: {}},
-    {name: "Lorigon",   health: 15,  damage: 8,   exp:10, category: "basic" ,skill: {}},
+    {name: "Slime",     health: 10,  damage: 5,   exp:5,  category: "basic" ,skill: {}},
+    {name: "Grey Bird", health: 10,  damage: 5,   exp:5,  category: "basic" ,skill: {}},
+    {name: "Lorigon",   health: 15,  damage: 8,   exp:5,  category: "basic" ,skill: {}},
     {name: "Musicat",   health: 25,  damage: 10,  exp:10, category: "basic" ,skill: {}},
     {name: "Minitor",   health: 35,  damage: 18,  exp:15, category: "basic" ,skill: {jumpslash: 30}},
     {name: "Goblin",    health: 30,  damage: 10,  exp:15, category: "basic" ,skill: {jumpslash: 35}},
-    {name: "Bat",       health: 10,  damage: 5,   exp:10, category: "basic" ,skill: {}},
-    {name: "Giant Bat", health: 35,  damage: 10,  exp:20, category: "basic" ,skill: {vampiricHit: true}},
+    {name: "Bat",       health: 10,  damage: 5,   exp:5,  category: "basic" ,skill: {}},
+    {name: "Giant Bat", health: 35,  damage: 10,  exp:15, category: "basic" ,skill: {vampiricHit: true}},
     {name: "Jared",     health: 40,  damage: 15,  exp:20, category: "basic" ,skill: {jumpslash: 40, heal: 15}},
-    {name: "Mimic",     health: 25,  damage: 14,  exp:15, category: "basic" ,skill: {}},
+    {name: "Mimic",     health: 25,  damage: 14,  exp:10, category: "basic" ,skill: {}},
     {name: "Makusa",    health: 55,  damage: 10,  exp:25, category: "basic" ,skill: {heal:20}},
     {name: "Bugaro",    health: 70,  damage: 5,   exp:20, category: "basic" ,skill: {}},
     {name: "Heath",     health: 70,  damage: 5,   exp:20, category: "basic" ,skill: {heal:20}},

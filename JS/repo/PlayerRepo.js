@@ -50,8 +50,7 @@ export function triggerStatus(player){
         statuses.forEach((status) => {
             const key = Object.keys(status)[0]
             const tickEffect = StatusEffect[key]
-
-            tickEffect(status[key],player)
+            tickEffect(status,player)
 
             status.duration--
             player.status = statuses.filter((status) => status.duration != 0)
