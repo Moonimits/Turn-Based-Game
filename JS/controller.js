@@ -405,7 +405,7 @@ export function updateExp(player, experience){
             player.exp = player.exp % player.expreq
             player.level++;
             player.maxhealth += 25;
-            player.damage += 5;
+            player.damage += 10;
             player.curhealth = player.maxhealth;
             updatePlayerDmgLabel(player)
     
@@ -413,7 +413,7 @@ export function updateExp(player, experience){
                 <div><b>You</b> Leveled UP!.</div>
                 <div><b>Current Level:</b> ${player.level}.</div>
                 <div><b>Maxhealth:</b> <span class='posStat'>+25hp</span>.</div>
-                <div><b>Damage:</b> <span class='posStat'>+5dmg</span>.</div>
+                <div><b>Damage:</b> <span class='posStat'>+10dmg</span>.</div>
                 <hr>`;
     
             log(levelLog)
