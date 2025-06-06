@@ -310,6 +310,7 @@ battleLog.addEventListener('click', function(e){
         const itemId = e.target.dataset.itemid
         equip(player, itemType, equipment)
         console.log(player.inventory)
+        equipButton.remove();
         useItem(player,itemId);
         randomEvent();
     }else if (e.target.id === 'ignore'){
