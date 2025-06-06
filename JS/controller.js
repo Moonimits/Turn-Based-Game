@@ -3,6 +3,7 @@ import { heroClass, Player } from "./model/Player.js";
 import { attackEnemy, useItem, equip, useSkill } from "./repo/PlayerRepo.js";
 import { randomBehavior } from "./repo/EntityRepo.js";
 import { itemPool, weapons, armors } from "./model/Equipment.js";
+import { probability } from "./repo/AbilityRepo.js";
 //================ HTML ELEMENTS ===========================//
 const classSummary = document.getElementById("classSummary");
 const tableSummary = document.getElementById("tableSummary");
@@ -75,8 +76,17 @@ export function generateEnemy(){
         updateEnemyHealthBar(enemy)
         ename.innerHTML = enemy.name;
         edmg.innerHTML  = enemy.damage;
-    
-        toggleButtons();
+
+        if(probability(50)){
+            setTimeout(()=>{
+                randomBehavior(enemy, player);
+                if(enemy.curhealth <= 0){
+                    handleDefeatEnemy(enemy, player)
+                }
+            }, 1000);
+        }else{
+            toggleButtons();
+        }
     });
     
 }
