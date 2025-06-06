@@ -82,11 +82,11 @@ export function equip(player, type, equipment){
         player.curhealth = player.curhealth > player.maxhealth ? player.maxhealth : player.curhealth;
         updateHealthBar(player)
     }else{
-        var inventoryItem = player.inventory.find(items => items.id === equipment.id)
+        const inventoryItem = player.inventory.find(items => items.id === equipment.id)
         if(inventoryItem){
             inventoryItem.qty += equipment.qty
         }else{
-            player.inventory.push(equipment)
+            player.inventory.push({...equipment})
         }
     }
 }
