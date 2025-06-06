@@ -8,6 +8,8 @@ const classSummary = document.getElementById("classSummary");
 const tableSummary = document.getElementById("tableSummary");
 const selectBox = document.getElementById("selectBox");
 const battleLog = document.getElementById('battleLog');
+const inventory = document.getElementById('inventory');
+const itemSlot = document.getElementById('itemSlot');
 const selectClass = document.getElementById('heroClass');
 const gameover = document.getElementById('gameover');
 const roundCounter = document.getElementById('roundCounter');
@@ -19,7 +21,8 @@ const gamelog = document.getElementById('game');
 const start = document.getElementById('submit');
 //player info
 const attackBtn = document.getElementById('attack');
-const itemBtn = document.getElementById('item');
+const showInv = document.getElementById('showInv');
+const closeInv = document.getElementById('closeInv');
 const skillBtn = document.getElementById('skill');
 const cd = document.getElementById('CD');
 
@@ -44,7 +47,7 @@ var enemy, player, equipment, itemType;
 //================ GAME FUNCTIONS ===========================//
 export function generateEnemy(){
     roundUpdate()
-    if(round % 50 == 0) enemyAttr++;   
+    if(round % 25 == 0) enemyAttr++;   
     increaseEnemyPool(round).then(()=>{
 
         const randomizer   = Math.floor(Math.random() * enemyPool.length);
@@ -52,8 +55,8 @@ export function generateEnemy(){
         enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp);
         
         //if round > 50 increase enemy attributes
-        const additionalHealth = 100 * enemyAttr
-        const additionalDamage = 20 * enemyAttr
+        const additionalHealth = 50 * enemyAttr
+        const additionalDamage = 10 * enemyAttr
         if(["basic", "elite"].includes(enemy.category)){
             enemy.maxhealth += additionalHealth
             enemy.curhealth += additionalHealth
@@ -79,6 +82,7 @@ export function generateEnemy(){
 }
 
 export function generateItem(){
+    let itemDetails;
     const itemPoolKeys = Object.keys(itemPool);
     const typeRand     = Math.floor(Math.random() * itemPoolKeys.length);
     const baseHealth   = player.maxhealth - (player.equipArmor != null ? player.equipArmor.health : 0);
@@ -90,26 +94,41 @@ export function generateItem(){
     const itemRand  = Math.floor(Math.random() * item.length);
     equipment = item[itemRand];
 
-    var stats = equipment.health ? equipment.health + 'hp' : equipment.damage + 'dmg';
-    if(equipment.health != undefined){
-        var bonusHealth = (baseHealth + equipment.health) - player.maxhealth;
-        var healthstat = bonusHealth < 0 ? `<span class="negStat">${bonusHealth}hp</span>`:`<span class="posStat">+${bonusHealth}hp</span>`;
+    if(["weapon","armor"].includes(itemType)){
+        var stats = equipment.health ? equipment.health + 'hp' : equipment.damage + 'dmg';
+        if(equipment.health != undefined){
+            var bonusHealth = (baseHealth + equipment.health) - player.maxhealth;
+            var healthstat = bonusHealth < 0 ? `<span class="negStat">${bonusHealth}hp</span>`:`<span class="posStat">+${bonusHealth}hp</span>`;
+        }else if(equipment.damage != undefined){
+            var bonusDamage = (baseDamage + equipment.damage) - player.damage;
+            var damagestat = bonusDamage < 0 ? `<span class="negStat">${bonusDamage}dmg</span>`:`<span class="posStat">+${bonusDamage}dmg</span>`;
+        }
+        itemDetails = `
+            <div class='text-success fw-bold'>!YOU FOUND AN ITEM!</div>
+            <div><b>Name:</b> <span class='${equipment.category ?? ''}'>${equipment.name}</span></div>
+            <div><b>Item Stat:</b> ${stats}</div>
+            <div><b>${itemType == 'weapon' ? `Damage` : `Bonus Health`}:</b> ${damagestat ?? healthstat}</div>
+            <div id='equipButton'>
+                <span class='btn btn-sm btn-success' id='equip'>Equip</span> 
+                <span class='btn btn-sm btn-danger' id='ignore'>Ignore</span>
+            </div>
+            <hr>`;
     }else{
-        var bonusDamage = (baseDamage + equipment.damage) - player.damage;
-        var damagestat = bonusDamage < 0 ? `<span class="negStat">${bonusDamage}dmg</span>`:`<span class="posStat">+${bonusDamage}dmg</span>`;
+        const statsMap = {
+            heal: `${equipment.heal} heal`,
+        } 
+        var stats = statsMap[equipment.type];
+        itemDetails = `
+            <div class='text-success fw-bold'>!YOU FOUND AN ITEM!</div>
+            <div><b>Name:</b> <span class='${equipment.category ?? ''}'>${equipment.name}</span></div>
+            <div><b>Item Stat:</b> ${stats}</div>
+            <div id='equipButton'>
+                <span class='btn btn-sm btn-success' id='equip'>Take</span> 
+                <span class='btn btn-sm btn-primary' data-itemid='${equipment.id}' id='use'>Use</span>
+            </div>
+            <hr>`;
     }
 
-    const itemDetails = `
-        <div class='text-success fw-bold'>!YOU FOUND AN ITEM!</div>
-        <div><b>Name:</b> <span class='${equipment.category ?? ''}'>${equipment.name}</span></div>
-        <div><b>Item Stat:</b> ${stats}</div>
-        <div><b>${itemType == 'weapon' ? `Damage` : `Bonus Health`}:</b> ${damagestat ?? healthstat}</div>
-        <div id='equipButton'>
-            <span class='btn btn-sm btn-success' id='equip'>Equip</span> 
-            <span class='btn btn-sm btn-danger' id='ignore'>Ignore</span>
-        </div>
-        <hr>`;
-    
     log(itemDetails);
 }
 
@@ -167,7 +186,7 @@ selectBox.innerHTML = heroClass.map((hero, index)=>{
     return `<div class="selectClass" data-id=${index}>${hero.class}</div>`
 }).join('');
 
-document.addEventListener("click", handleClassSelect)
+selectBox.addEventListener("click", handleClassSelect)
 
 //Game Start
 start.addEventListener('click', ()=>{
@@ -222,10 +241,32 @@ attackBtn.addEventListener('click', ()=>{
 })
 
 //Use Item Button
-itemBtn.addEventListener('click', ()=>{
+showInv.addEventListener('click', ()=>{
     if(!attackBtn.classList.contains("disabled")){
+        inventory.classList.add("show")
+        console.log(player.inventory)
+        const inventoryItems = player.inventory.map((item)=>{
+            var itemEffect = item.type == "heal" ? `${item.heal} heal` : '';
+            return `<tr>
+                        <td class="text-start">${item.name}</td>
+                        <td>${itemEffect}</td>
+                        <td><button class="btn btn-success btn-sm" data-itemid="${item.id}" id="useItem">Use ${item.qty}x</button></td>
+                    </tr>`
+        }).join('')
+        itemSlot.innerHTML = inventoryItems;
+    }
+})
+closeInv.addEventListener('click', ()=>{
+    if(!attackBtn.classList.contains("disabled")){
+        inventory.classList.remove("show")
+    }
+})
+inventory.addEventListener('click', (e)=>{
+    if(e.target.id === "useItem"){
+        const itemId = e.target.dataset.itemid
         toggleButtons();
-        useItem(player).then(()=>{
+        inventory.classList.remove("show")
+        useItem(player, itemId).then(()=>{
             setTimeout(()=>{
                 randomBehavior(enemy, player);
                 if(enemy.curhealth <= 0){
@@ -265,6 +306,12 @@ battleLog.addEventListener('click', function(e){
         equip(player, itemType, equipment)
         equipButton.remove();
         randomEvent();
+    }else if(e.target.id === 'use'){
+        const itemId = e.target.dataset.itemid
+        equip(player, itemType, equipment)
+        console.log(player.inventory)
+        useItem(player,itemId);
+        randomEvent();
     }else if (e.target.id === 'ignore'){
         equipButton.remove();
         randomEvent();
@@ -280,7 +327,7 @@ export function log(msg){
 
 export function toggleButtons(){
     attackBtn.classList.toggle("disabled")
-    itemBtn.classList.toggle("disabled")
+    showInv.classList.toggle("disabled")
 
     if(player.skillCd == 0){
         cd.classList.add("d-none")
@@ -329,7 +376,7 @@ export function updateEnemyStatusLabel(enemy){
 
 export function handleDefeatEnemy(enemy, player){
     attackBtn.classList.add("disabled")
-    itemBtn.classList.add("disabled")
+    showInv.classList.add("disabled")
     setTimeout(()=>{
         var slainLog = `
         <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
@@ -347,7 +394,7 @@ export function updateExp(player, experience){
         if(player.exp >= player.expreq){
             player.exp = player.exp % player.expreq
             player.level++;
-            player.maxhealth += 10;
+            player.maxhealth += 25;
             player.damage += 5;
             player.curhealth = player.maxhealth;
             updatePlayerDmgLabel(player)
@@ -355,7 +402,7 @@ export function updateExp(player, experience){
             const levelLog = `
                 <div><b>You</b> Leveled UP!.</div>
                 <div><b>Current Level:</b> ${player.level}.</div>
-                <div><b>Maxhealth:</b> <span class='posStat'>+10hp</span>.</div>
+                <div><b>Maxhealth:</b> <span class='posStat'>+25hp</span>.</div>
                 <div><b>Damage:</b> <span class='posStat'>+5dmg</span>.</div>
                 <hr>`;
     

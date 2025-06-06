@@ -69,5 +69,6 @@ export class Player{
         this.expreq = 100;
         this.exp = 0;
         this.status = []
+        this.inventory = []
     }
 }

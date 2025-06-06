@@ -19,6 +19,49 @@
             height: 500px;
             overflow-y: auto;
         }
+        #inventory{
+            position: absolute;
+            width: 420px;
+            border: 2px solid green;
+            background-color: white;
+            border-radius: 5px;
+            padding: 5px;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -120%);
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.277);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: all 0.4s;
+        }
+        #inventory.show{
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+        #inventory::before{
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 10px solid;
+            border-color: green transparent transparent transparent;
+        }
+        #inventory::after{
+            content: "Inventory";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid green;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-align: center;
+            background-color: white;
+            font-size: 12px;
+        }
         #roundCounter{
             position: absolute;
             top: 0;
@@ -63,6 +106,8 @@
             background-color: crimson;
         }
         .controls{
+            display: flex;
+            gap: 4px;
             width: fit-content;
             margin-top: 8px;    
             margin-inline: auto;
@@ -151,9 +196,12 @@
             #tableSummary{
                 font-size: 10px !important;
             }
+            #inventory{
+                width: 390px;
+            }
         }
     </style>
-    <title>Document</title>
+    <title>Through the Unfortunate</title>
 </head>
 <body>
     <div class="container">
@@ -161,7 +209,7 @@
             <div class="row justify-content-center g-2">
                 <div class="col-lg-4">
                     <div class="playerSet">
-                        <input type="text" id="username" class="form-control" placeholder="Enter your name...">
+                        <input type="text" id="username" class="form-control" placeholder="Enter your name..." value="Player">
                         <input type="hidden" id="heroClass" class="form-select mt-2" required>
                         <h6 class="text-center bg-primary mt-2 p-2 text-white rounded shadow fw-bolder">- - - - - CLASS SELECT - - - - -</h6>
                         <div class="selectBox" id="selectBox"></div>
@@ -216,7 +264,22 @@
             </div>
             <div class="controls">
                 <button class="btn btn-danger disabled" id="attack">Attack</button>
-                <button class="btn btn-success disabled" id="item">Item</button>
+                <div class="position-relative">
+                    <div class="inventory text-center" id="inventory">
+                        <table class="table table-bordered">
+                            <thead class="table-success">
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Effect</th>
+                                    <th>Uses</th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemSlot"></tbody>
+                        </table>
+                        <button class="btn btn-danger btn-sm mx-auto" id="closeInv">Close</button>
+                    </div>
+                    <button class="btn btn-success disabled" id="showInv">Item</button>
+                </div>
                 <button class="btn btn-warning disabled position-relative" id="skill">Skill 
                     <span id="CD" class="d-none"></span>
                 </button>

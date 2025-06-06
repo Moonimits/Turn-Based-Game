@@ -15,18 +15,24 @@ export function attackEnemy(enemy, player){
     })
 }
 
-export function useItem(player){
+export function useItem(player, itemId){
     return new Promise((resolve)=>{
         triggerStatus(player)
-        const heal = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
-        player.curhealth += heal;
-        player.curhealth = player.curhealth > player.maxhealth ? player.maxhealth : player.curhealth;
-        
-        var healLog = `
-            <div><b>You</b> used an Item, heal <b id="heal">${heal}hp</b>.</div><hr>`;    
-        log(healLog);
-        if(player.skillCd != 0) player.skillCd--;
-        updateHealthBar(player);
+        const item = player.inventory.find(item => item.id == itemId);
+        if(item.type == 'heal')
+        {
+            const heal = item.heal;
+            player.curhealth += heal;
+            player.curhealth = player.curhealth > player.maxhealth ? player.maxhealth : player.curhealth;
+            
+            var healLog = `
+                <div><b>You</b> used ${item.name}, heal <b id="heal">${heal}hp</b>.</div><hr>`;    
+            log(healLog);
+            if(player.skillCd != 0) player.skillCd--;
+            updateHealthBar(player);
+        }
+        item.qty--;
+        player.inventory = player.inventory.filter(item => item.qty != 0);
         resolve();
     })
 }
@@ -65,7 +71,7 @@ export function equip(player, type, equipment){
         player.equipWeapon = equipment;
         player.damage += equipment.damage;
         dmg.innerHTML = player.damage;
-    }else{
+    }else if (type == 'armor'){
         if(player.equipArmor) {
             player.maxhealth -= player.equipArmor.health
             player.curhealth -= player.equipArmor.health
@@ -75,5 +81,12 @@ export function equip(player, type, equipment){
         player.curhealth += equipment.health;
         player.curhealth = player.curhealth > player.maxhealth ? player.maxhealth : player.curhealth;
         updateHealthBar(player)
+    }else{
+        var inventoryItem = player.inventory.find(items => items.id === equipment.id)
+        if(inventoryItem){
+            inventoryItem.qty += equipment.qty
+        }else{
+            player.inventory.push(equipment)
+        }
     }
 }

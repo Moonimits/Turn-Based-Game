@@ -46,6 +46,22 @@ export const specialWeapon = [
     {name: "Marcosoft: #Violence",  damage: 100, category: 'hack'},
 ]
 
+export const consumables = [
+    {id: 1, name: "Small Healing Potion",   heal:50,  type: "heal", qty:1},
+    {id: 1, name: "Small Healing Potion",   heal:50,  type: "heal", qty:1},
+    {id: 1, name: "Small Healing Potion",   heal:50,  type: "heal", qty:1},
+    {id: 1, name: "Small Healing Potion",   heal:50,  type: "heal", qty:1},
+    {id: 1, name: "Small Healing Potion",   heal:50,  type: "heal", qty:1},
+    {id: 2, name: "Healing Potion",         heal:150, type: "heal", qty:1},
+    {id: 2, name: "Healing Potion",         heal:150, type: "heal", qty:1},
+    {id: 2, name: "Healing Potion",         heal:150, type: "heal", qty:1},
+    {id: 3, name: "Great Healing Potion",   heal:400, type: "heal", qty:1},
+]
+
+export function procItemEffect(){
+
+}
+
 export const itemPool = {
     weapon: [
         ...weapons,
@@ -59,4 +75,7 @@ export const itemPool = {
         ...armors,
         ...specialArmor
     ],
+    consumable:[
+        ...consumables
+    ]
 }
