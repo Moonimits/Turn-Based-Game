@@ -63,13 +63,12 @@ export function jumpslash(enemy,player){
 }
 
 export function venom(enemy,player){
-    const venomDmg = enemy.skillSet.venom.dmg;
-    const duration = enemy.skillSet.venom.dur;
+    const venomDmg = enemy.skillSet.venom;
     player.curhealth -= venomDmg;
-    inflictStatus(player, {poison: venomDmg, duration: duration, lbl:"PSN"})
+    inflictStatus(player, {poison: venomDmg, duration: 5, lbl:"PSN"})
     updateHealthBar(player);
     var skillLog = `
-        <div><b id="elog">${enemy.name}</b> used <b id='elog'>Poison</b>, <b>You</b> take <b>${venomDmg}dmg</b> for ${duration}.</div><hr>`;
+        <div><b id="elog">${enemy.name}</b> used <b id='elog'>Poison</b>, <b>You</b> take <b>${venomDmg}dmg</b> for 5 turns.</div><hr>`;
     log(skillLog);
 }
 

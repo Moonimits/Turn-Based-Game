@@ -58,7 +58,7 @@ export const consumables = [
     {id: 3, name: "Great Healing Potion",   heal:400, type: "heal", qty:1},
 ]
 
-export function procItemEffect(){
+export function procItemEffect(player){
 
 }
 

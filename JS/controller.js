@@ -41,28 +41,32 @@ const edmg  = document.getElementById('edmg');
 const est  = document.getElementById('est');
 var score   = 0;
 var round = 0;
-var enemyAttr = 0;
 var enemy, player, equipment, itemType;
 //================ HTML ELEMENTS ===========================//
 
 //================ GAME FUNCTIONS ===========================//
 export function generateEnemy(){
     roundUpdate()
-    if(round % 25 == 0) enemyAttr++;   
     increaseEnemyPool(round).then(()=>{
+
+        if(round % 25 == 0){
+            enemyPool.forEach(enemy => {
+                if(["basic", "elite"].includes(enemy.category)){
+                    enemy.health += (50 + (Math.round(enemy.health * (player.level/100))));
+                    enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
+                }
+            });
+            if(round >= 150){
+                if(["boss"].includes(enemy.category)){
+                    enemy.health += (50 + (Math.round(enemy.health * (player.level/100))));
+                    enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
+                }
+            }
+        }
 
         const randomizer   = Math.floor(Math.random() * enemyPool.length);
         const entity       = enemyPool[randomizer];
         enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp);
-        
-        //if round > 50 increase enemy attributes
-        const additionalHealth = 50 * enemyAttr
-        const additionalDamage = 10 * enemyAttr
-        if(["basic", "elite"].includes(enemy.category)){
-            enemy.maxhealth += additionalHealth
-            enemy.curhealth += additionalHealth
-            enemy.damage += additionalDamage
-        }
     
         //enemy name style
         const enemyDetails = `
@@ -399,21 +403,22 @@ export function handleDefeatEnemy(enemy, player){
 
 export function updateExp(player, experience){
     return new Promise((resolve)=>{
-
+        const bonushealth = 25
+        const bonusdamage = 10
         player.exp += experience;
         if(player.exp >= player.expreq){
             player.exp = player.exp % player.expreq
             player.level++;
-            player.maxhealth += 25;
-            player.damage += 10;
+            player.maxhealth += bonushealth;
+            player.damage += bonusdamage;
             player.curhealth = player.maxhealth;
             updatePlayerDmgLabel(player)
     
             const levelLog = `
                 <div><b>You</b> Leveled UP!.</div>
                 <div><b>Current Level:</b> ${player.level}.</div>
-                <div><b>Maxhealth:</b> <span class='posStat'>+25hp</span>.</div>
-                <div><b>Damage:</b> <span class='posStat'>+10dmg</span>.</div>
+                <div><b>Maxhealth:</b> <span class='posStat'>+${bonushealth}hp</span>.</div>
+                <div><b>Damage:</b> <span class='posStat'>+${bonusdamage}dmg</span>.</div>
                 <hr>`;
     
             log(levelLog)

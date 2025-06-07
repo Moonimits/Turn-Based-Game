@@ -16,7 +16,7 @@ export const enemy = [
     {name: "Heath",         health: 70,  damage: 5,   exp:20, category: "basic" ,skill: {heal:20}},
     {name: "Gulag",         health: 20,  damage: 10,  exp:10, category: "basic" ,skill: {}},
     {name: "Lotar",         health: 50,  damage: 18,  exp:20, category: "basic" ,skill: {regeneration: 5}},
-    {name: "Altair Snake",  health: 60,  damage: 15,  exp:20, category: "basic" ,skill: {venom: {dmg: 10, dur:5}}},
+    {name: "Altair Snake",  health: 60,  damage: 15,  exp:20, category: "basic" ,skill: {venom: 10}},
     {name: "Wolf Alpha",    health: 60,  damage: 20,  exp:25, category: "basic" ,skill: {critical: 2}},
     {name: "Luna",          health: 50,  damage: 18,  exp:20, category: "basic" ,skill: {heal:20, critical: 2}},
     {name: "Naga",          health: 50,  damage: 15,  exp:25, category: "basic" ,skill: {heal: 30, jumpslash: 35}},
@@ -28,7 +28,7 @@ export const specialEnemy = [
         name: "Dragon",    
         health: 300, 
         damage: 50,  
-        exp:35,  
+        exp:30,  
         skill: {fireball: 90, firebreath: 120}, 
         category: 'elite'
     },
@@ -38,7 +38,7 @@ export const specialEnemy = [
         damage: 50,  
         skill: {heal:80, regeneration: 20, vampiricHit:true}, 
         category: 'elite',
-        exp: 35
+        exp: 30
     },
     {
         name: "Malphys",           
@@ -46,7 +46,7 @@ export const specialEnemy = [
         damage: 90,  
         skill: {fireball: 80, heal: 100},    
         category: 'elite',
-        exp: 35
+        exp: 30
     },
     {
         name: "A'Rzor",           
@@ -54,7 +54,7 @@ export const specialEnemy = [
         damage: 30,  
         skill: {lacerate: 100, bloodBreak: .40},    
         category: 'elite',
-        exp: 35
+        exp: 30
     },
     {
         name: "Luxan Duelist",           
@@ -68,9 +68,9 @@ export const specialEnemy = [
         name: "BioVoid",           
         health: 160,  
         damage: 10,  
-        skill: {healthSteal: 0.1},    
+        skill: {healthSteal: 0.15},    
         category: 'elite',
-        exp: 35
+        exp: 30
     },
     // {
     //     name: "Living Charter",           
@@ -101,13 +101,22 @@ export const bosses = [
     },
 ]
 
-export var enemyPool = [...enemy, ...enemy, ...enemy, ...enemy,];
+// export var enemyPool = [...enemy, ...enemy, ...enemy, ...enemy];
+export var enemyPool = [];
+
+for (let index = 1; index <= 4; index++) {
+    enemy.forEach(enemy => {
+        enemyPool.push({...enemy})
+    });
+}
 
 export function increaseEnemyPool(round){
     return new Promise((resolve)=>{
         var increasePool = null;
         if(round % 10 == 0){
-            enemyPool = [...enemyPool, ...specialEnemy];
+            specialEnemy.forEach(special => {
+                enemyPool.push({...special})
+            });
             increasePool = `
                 <div class='text-danger fw-bold'>!NUMBER OF SPECIAL ENEMIES INCREASED!</div>
                 <hr>`;
@@ -115,7 +124,11 @@ export function increaseEnemyPool(round){
         }
     
         if(round % 50 == 0){
-            enemyPool = [...enemyPool, ...bosses, ...bosses,]
+            for (let index = 1; index <= 2; index++) {
+                bosses.forEach(boss => {
+                    enemyPool.push({...boss})
+                });
+            }
             increasePool = `
                 <div class='text-danger fw-bold'>!NUMBER OF BOSSES INCREASED!</div>
                 <hr>`;
