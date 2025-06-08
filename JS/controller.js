@@ -54,6 +54,18 @@ export function generateEnemy(){
                 if(["basic", "elite"].includes(enemy.category)){
                     enemy.health += (50 + (Math.round(enemy.health * (player.level/100))));
                     enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
+                    for (const skillName in enemy.skill) {
+                        if(typeof enemy.skill[skillName] === "number" && skillName != "critical"){
+                            if(["heal","regeneration"].includes(skillName)){
+                                enemy.skill[skillName] += (Math.round(enemy.health * 0.2))
+                            }else if(["healtSteal","bloodBreak"].includes(skillName)){
+                                enemy.skill[skillName] += 2;
+                            }else{
+                                enemy.skill[skillName] += (Math.round(enemy.damage * 0.2))
+                            }
+                        }
+                    }
+                    console.log(enemy)
                 }
             });
             if(round >= 150){

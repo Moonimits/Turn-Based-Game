@@ -104,7 +104,7 @@ export function lacerate(enemy, player){{
 }}
 
 export function bloodBreak(enemy, player){{
-    const breakDmg = Math.floor(player.maxhealth * enemy.skillSet.bloodBreak)
+    const breakDmg = Math.floor(player.maxhealth * (enemy.skillSet.bloodBreak/100))
     player.curhealth -= breakDmg
     updateHealthBar(player)
     var skillLog =`
@@ -113,10 +113,10 @@ export function bloodBreak(enemy, player){{
 }}
 
 export function healthSteal(enemy, player){{
-    const healthSteal = 10 + Math.floor(player.maxhealth * enemy.skillSet.healthSteal)
+    const healthSteal = 10 + Math.floor(player.maxhealth * (enemy.skillSet.healthSteal/100))
     player.maxhealth -= healthSteal
     enemy.maxhealth += healthSteal
-    enemy.curhealth += healthSteal
+    enemy.curhealth += healthSteal + ((enemy.maxhealth - enemy.curhealth)*0.35);
     if(probability(50)) inflictStatus(enemy, {regen:10, duration: 5, lbl: "RGN"})
     if(player.curhealth >= player.maxhealth) player.curhealth = player.maxhealth
     updateEnemyHealthBar(enemy)

@@ -52,7 +52,7 @@ export const specialEnemy = [
         name: "A'Rzor",           
         health: 380,  
         damage: 30,  
-        skill: {lacerate: 100, bloodBreak: .40},    
+        skill: {lacerate: 100, bloodBreak: 40},    
         category: 'elite',
         exp: 30
     },
@@ -68,7 +68,7 @@ export const specialEnemy = [
         name: "BioVoid",           
         health: 160,  
         damage: 10,  
-        skill: {healthSteal: 0.15},    
+        skill: {healthSteal: 15},    
         category: 'elite',
         exp: 30
     },
@@ -106,7 +106,7 @@ export var enemyPool = [];
 
 for (let index = 1; index <= 4; index++) {
     enemy.forEach(enemy => {
-        enemyPool.push({...enemy})
+        enemyPool.push(structuredClone(enemy))
     });
 }
 
@@ -115,7 +115,7 @@ export function increaseEnemyPool(round){
         var increasePool = null;
         if(round % 10 == 0){
             specialEnemy.forEach(special => {
-                enemyPool.push({...special})
+                enemyPool.push(structuredClone(special))
             });
             increasePool = `
                 <div class='text-danger fw-bold'>!NUMBER OF SPECIAL ENEMIES INCREASED!</div>
@@ -126,7 +126,7 @@ export function increaseEnemyPool(round){
         if(round % 50 == 0){
             for (let index = 1; index <= 2; index++) {
                 bosses.forEach(boss => {
-                    enemyPool.push({...boss})
+                    enemyPool.push(structuredClone(boss))
                 });
             }
             increasePool = `
@@ -150,7 +150,7 @@ export class Enemy{
         this.maxhealth = health;
         this.curhealth = health;
         this.damage = damage;
-        this.skillSet = skills;
+        this.skillSet = {...skills};
         this.category = category;
         this.expval = exp;
         this.status = []
