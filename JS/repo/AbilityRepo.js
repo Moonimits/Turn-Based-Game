@@ -108,7 +108,7 @@ export function bloodBreak(enemy, player){{
     player.curhealth -= breakDmg
     updateHealthBar(player)
     var skillLog =`
-        <div><b id="elog">${enemy.name}</b> used Blood Break, dealt <b>${breakDmg}dmg</b> (${enemy.skillSet.bloodBreak * 100}% MaxHP).</div><hr>`;
+        <div><b id="elog">${enemy.name}</b> used Blood Break, dealt <b>${breakDmg}dmg</b> (${enemy.skillSet.bloodBreak}% MaxHP).</div><hr>`;
     log(skillLog)
 }}
 
@@ -116,13 +116,13 @@ export function healthSteal(enemy, player){{
     const healthSteal = 10 + Math.floor(player.maxhealth * (enemy.skillSet.healthSteal/100))
     player.maxhealth -= healthSteal
     enemy.maxhealth += healthSteal
-    enemy.curhealth += healthSteal + ((enemy.maxhealth - enemy.curhealth)*0.35);
+    enemy.curhealth += healthSteal + (Math.floor((enemy.maxhealth - enemy.curhealth)*0.35));
     if(probability(50)) inflictStatus(enemy, {regen:10, duration: 5, lbl: "RGN"})
     if(player.curhealth >= player.maxhealth) player.curhealth = player.maxhealth
     updateEnemyHealthBar(enemy)
     updateHealthBar(player)
     var skillLog =`
-        <div><b id="elog">${enemy.name}</b> used Health Steal, stole <b>${healthSteal}hp</b> (10 + ${enemy.skillSet.healthSteal * 100}% MaxHP) from you and added to its own.</div><hr>`;
+        <div><b id="elog">${enemy.name}</b> used Health Steal, stole <b>${healthSteal}hp</b> (10 + ${enemy.skillSet.healthSteal}% MaxHP) from you and added to its own.</div><hr>`;
     log(skillLog)
 }}
 
@@ -216,7 +216,7 @@ export function inflictStatus(target, newStatus){
         }
     });
 
-    if(!exists) target.status.push(newStatus)
+    if(!exists) target.status.push({...newStatus})
 
     if(target instanceof Player){
         updatePlayerStatusLabel(target)

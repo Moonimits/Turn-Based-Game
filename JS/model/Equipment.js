@@ -1,3 +1,6 @@
+import { updateHealthBar } from "../controller.js";
+import { inflictStatus, probability } from "../repo/AbilityRepo.js";
+
 export const weapons = [
     {name: "Book", damage: 1},
     {name: "Rock", damage: 1},
@@ -12,6 +15,8 @@ export const weapons = [
     {name: "Halberd", damage: 10},
     {name: "War Hammer", damage: 10},
     {name: "War Axe", damage: 10},
+    {name: "Blessed Dagger", damage: 5, effect:{name: "Heal", amount: 10, chance: 50}},
+    {name: "Red Spear", damage: 8, effect:{name: "Strength", chance: 35, status: {strength: 10, duration: 2, lbl:"ATK+", applied: false}}},
 ];
 
 export const armors = [
@@ -36,6 +41,7 @@ export const specialArmor = [
 ]
 
 export const specialWeapon = [
+    {name: "Altaric Sword",         damage: 25,  category: 'special', effect:{name: "Lifesteal", percent: 20}},
     {name: "Longinus Spear",        damage: 30,  category: 'special'},
     {name: "Soul Cipher",           damage: 55,  category: 'special'},
     {name: "Checkaliber",           damage: 30,  category: 'special'},
@@ -58,8 +64,30 @@ export const consumables = [
     {id: 3, name: "Great Healing Potion",   heal:400, type: "heal", qty:1},
 ]
 
-export function procItemEffect(player){
+export function procItemEffect(player, enemy){
+    const weaponEffect = player.equipWeapon.effect
 
+    if(weaponEffect)
+    {
+        const effectName = Object.values(weaponEffect)[0];
+
+        if(effectName == "Lifesteal"){
+            player.curhealth += Math.round(player.damage * (weaponEffect.percent/100));
+            if(player.curhealth > player.maxhealth) player.curhealth = player.maxhealth
+            updateHealthBar(player)
+        }else if(effectName == "Heal"){
+            if(probability(weaponEffect.chance)){
+                player.curhealth += weaponEffect.amount;
+                if(player.curhealth > player.maxhealth) player.curhealth = player.maxhealth
+                updateHealthBar(player)
+            }
+        }else if(effectName == "Strength"){
+            if(probability(weaponEffect.chance)){
+                inflictStatus(player, weaponEffect.status)
+                console.log(player.status)
+            }
+        }
+    }
 }
 
 export const itemPool = {

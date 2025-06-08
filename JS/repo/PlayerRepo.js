@@ -1,9 +1,11 @@
 import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyStatusLabel, updatePlayerStatusLabel } from "../controller.js";
+import { procItemEffect } from "../model/Equipment.js";
 import * as Abilities from "./AbilityRepo.js";
 import * as StatusEffect from "./StatusRepo.js";
 
 export function attackEnemy(enemy, player){
     return new Promise((resolve)=>{
+        if(player.equipWeapon) procItemEffect(player);
         triggerStatus(player)
         enemy.curhealth -= player.damage;
         updateEnemyHealthBar(enemy);
@@ -56,10 +58,10 @@ export function triggerStatus(player){
         statuses.forEach((status) => {
             const key = Object.keys(status)[0]
             const tickEffect = StatusEffect[key]
+            
             tickEffect(status,player)
-
-            status.duration--
             player.status = statuses.filter((status) => status.duration != 0)
+            status.duration--
         });
     }
     updatePlayerStatusLabel(player)

@@ -34,7 +34,9 @@ export function strength(status, target){
         target.damage += status.strength;;
         target.status[index].applied = true
     }
-    if(status.duration == 0) target.damage -= status.strength
+    if(status.duration <= 0) {
+        target.damage -= status.strength
+    }
     if(target instanceof Player){
         updatePlayerDmgLabel(target)
     }else{

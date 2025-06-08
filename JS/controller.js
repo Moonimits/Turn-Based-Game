@@ -65,7 +65,6 @@ export function generateEnemy(){
                             }
                         }
                     }
-                    console.log(enemy)
                 }
             });
             if(round >= 150){
@@ -129,11 +128,23 @@ export function generateItem(){
             var bonusDamage = (baseDamage + equipment.damage) - player.damage;
             var damagestat = bonusDamage < 0 ? `<span class="negStat">${bonusDamage}dmg</span>`:`<span class="posStat">+${bonusDamage}dmg</span>`;
         }
+
+        var effect = equipment.effect;
+        var effectLabel = '';
+        if(effect){
+            var effectname = effect.name;
+            var amount = effect.amount ?? '';
+            var chance = effect.chance ? `(${effect.chance}%)` : '';
+            var percent = effect.percent ? `(${effect.percent}%)` : '';
+            effectLabel = `<div><b>Effect:</b> ${amount} ${effectname} ${chance||percent}</div>`
+        }
+
         itemDetails = `
             <div class='text-success fw-bold'>!YOU FOUND AN ITEM!</div>
             <div><b>Name:</b> <span class='${equipment.category ?? ''}'>${equipment.name}</span></div>
             <div><b>Item Stat:</b> ${stats}</div>
             <div><b>${itemType == 'weapon' ? `Damage` : `Bonus Health`}:</b> ${damagestat ?? healthstat}</div>
+            ${effectLabel}
             <div id='equipButton'>
                 <span class='btn btn-sm btn-success' id='equip'>Equip</span> 
                 <span class='btn btn-sm btn-danger' id='ignore'>Ignore</span>
@@ -239,6 +250,8 @@ start.addEventListener('click', ()=>{
     gamelog.style.display   = "block";
     
     console.log(player)
+    window.player = player
+
     playerHealthChecker();
     randomEvent();
 });
