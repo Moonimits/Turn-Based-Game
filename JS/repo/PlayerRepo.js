@@ -5,12 +5,15 @@ import * as StatusEffect from "./StatusRepo.js";
 
 export function attackEnemy(enemy, player){
     return new Promise((resolve)=>{
-        if(player.equipWeapon) procItemEffect(player);
-        triggerStatus(player)
+        var extraDmgLbl = '';
         enemy.curhealth -= player.damage;
+        if(player.equipWeapon) {
+            extraDmgLbl = procItemEffect(player, enemy);
+        }
+        triggerStatus(player)
         updateEnemyHealthBar(enemy);
         var attackLog = `
-            <div><b>You</b> attacked <b id="elog">${enemy.name}</b>, dealt <b>${player.damage}dmg</b>.</div><hr>`;    
+            <div><b>You</b> attacked <b id="elog">${enemy.name}</b>, dealt <b>${player.damage}${extraDmgLbl}dmg</b>.</div><hr>`;    
         log(attackLog);
         if(player.skillCd != 0) player.skillCd--;
         resolve()

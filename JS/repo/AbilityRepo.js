@@ -1,4 +1,4 @@
-import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyDmgLabel, updatePlayerStatusLabel, updateEnemyStatusLabel } from "../controller.js";
+import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyDmgLabel, updatePlayerStatusLabel, updateEnemyStatusLabel, updatePlayerDmgLabel } from "../controller.js";
 import { equip } from "./PlayerRepo.js";
 import { Player } from "../model/Player.js";
 import { strength } from "./StatusRepo.js";
@@ -30,7 +30,15 @@ export function rage(enemy, player){
         <div><b id="elog">${enemy.name}</b> used Rage, <b>+${rage}dmg</b>.</div><hr>`;    
     log(rageLog);
     updateEnemyDmgLabel(enemy)
-    updateEnemyHealthBar(enemy);
+}
+
+export function weaken(enemy, player){
+    const weaken = enemy.skillSet.weaken;
+    inflictStatus(player, {weaken: weaken, duration: 3, lbl:"ATK-", applied: false})
+    var weaknessLog = `
+        <div><b id="elog">${enemy.name}</b> used Weaken, reduced your damage by <b>-${weaken}dmg</b>.</div><hr>`;    
+    log(weaknessLog);
+    updatePlayerDmgLabel(player)
 }
 
 export function fireball(enemy,player){

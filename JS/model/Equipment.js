@@ -1,4 +1,4 @@
-import { updateHealthBar } from "../controller.js";
+import { updateEnemyHealthBar, updateHealthBar } from "../controller.js";
 import { inflictStatus, probability } from "../repo/AbilityRepo.js";
 
 export const weapons = [
@@ -15,8 +15,9 @@ export const weapons = [
     {name: "Halberd", damage: 10},
     {name: "War Hammer", damage: 10},
     {name: "War Axe", damage: 10},
-    {name: "Blessed Dagger", damage: 5, effect:{name: "Heal", amount: 10, chance: 50}},
-    {name: "Red Spear", damage: 8, effect:{name: "Strength", chance: 35, status: {strength: 10, duration: 2, lbl:"ATK+", applied: false}}},
+    {name: "Blessed Dagger", damage: 6, effect:{name: "Heal", amount: 10, chance: 50}},
+    {name: "Red Spear", damage: 8, effect:{name: "Strength", type: "buff", chance: 35, status: {strength: 10, duration: 2, lbl:"ATK+", applied: false}}},
+    {name: "Venomous Dagger", damage: 9, effect:{name: "Posion", type: "inflict", chance: 35, status: {poison: 10, duration: 4, lbl:"PSN"}}},
 ];
 
 export const armors = [
@@ -43,12 +44,12 @@ export const specialArmor = [
 export const specialWeapon = [
     {name: "Altaric Sword",         damage: 25,  category: 'special', effect:{name: "Lifesteal", percent: 20}},
     {name: "Longinus Spear",        damage: 30,  category: 'special'},
-    {name: "Soul Cipher",           damage: 55,  category: 'special'},
+    {name: "Soul Cipher",           damage: 45,  category: 'special', effect:{name: "Healthsteal", percent: 10}},
     {name: "Checkaliber",           damage: 30,  category: 'special'},
-    {name: "Xercero",               damage: 43,  category: 'special'},
-    {name: "Dragonus",              damage: 60,  category: 'special'},
-    {name: "Pxosk",                 damage: 48,  category: 'special'},
-    {name: "Wylter Pol",            damage: 35,  category: 'special'},
+    {name: "Xercero",               damage: 43,  category: 'special', effect:{name: "Flames", type:"inflict", chance: 35, status: {burn: 40, duration: 3, lbl:"BRN"}}},
+    {name: "Dragonus",              damage: 50,  category: 'special', effect:{name: "Flames", type:"inflict", chance: 50, status: {burn: 50, duration: 3, lbl:"BRN"}}},
+    {name: "Pxosk",                 damage: 48,  category: 'special', effect:{name: "Strength", type: "buff", chance: 35, status: {strength: 30, duration: 2, lbl:"ATK+", applied: false}}},
+    {name: "Wylter Pol",            damage: 35,  category: 'special', effect:{name: "Lifebreak", percent: 5}},
     {name: "Marcosoft: #Violence",  damage: 100, category: 'hack'},
 ]
 
@@ -75,19 +76,34 @@ export function procItemEffect(player, enemy){
             player.curhealth += Math.round(player.damage * (weaponEffect.percent/100));
             if(player.curhealth > player.maxhealth) player.curhealth = player.maxhealth
             updateHealthBar(player)
+        }else if(effectName == "Lifebreak"){
+            enemy.curhealth -= Math.round(enemy.curhealth * (weaponEffect.percent/100));
+            const extraDmgLbl = `+(${weaponEffect.percent}%HP)`;
+
+            return extraDmgLbl;
+        }else if(effectName == "Healthsteal"){
+            if(enemy.curhealth <= 0){
+                player.maxhealth += Math.round(enemy.maxhealth * (weaponEffect.percent/100));
+                player.curhealth += Math.round(enemy.maxhealth * (weaponEffect.percent/100));
+                updateHealthBar(player)
+            }
         }else if(effectName == "Heal"){
             if(probability(weaponEffect.chance)){
                 player.curhealth += weaponEffect.amount;
                 if(player.curhealth > player.maxhealth) player.curhealth = player.maxhealth
                 updateHealthBar(player)
             }
-        }else if(effectName == "Strength"){
+        }else if(weaponEffect.type == "buff"){
             if(probability(weaponEffect.chance)){
                 inflictStatus(player, weaponEffect.status)
-                console.log(player.status)
+            }
+        }else if(weaponEffect.type == "inflict"){
+            if(probability(weaponEffect.chance)){
+                inflictStatus(enemy, weaponEffect.status)
             }
         }
     }
+    return '';
 }
 
 export const itemPool = {

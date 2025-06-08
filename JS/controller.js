@@ -416,6 +416,7 @@ export function updateEnemyStatusLabel(enemy){
 export function handleDefeatEnemy(enemy, player){
     attackBtn.classList.add("disabled")
     showInv.classList.add("disabled")
+    skillBtn.classList.add("disabled")
     setTimeout(()=>{
         var slainLog = `
         <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;

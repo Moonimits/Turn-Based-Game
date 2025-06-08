@@ -43,5 +43,22 @@ export function strength(status, target){
         updateEnemyDmgLabel(target)
     }
 }
+
+export function weakness(status, target){
+    const index = target.status.findIndex(stat => stat.weakness) 
+    const applied = target.status[index].applied;
+    if(!applied){
+        target.damage -= status.weakness;
+        target.status[index].applied = true
+    }
+    if(status.duration <= 0) {
+        target.damage += status.weakness
+    }
+    if(target instanceof Player){
+        updatePlayerDmgLabel(target)
+    }else{
+        updateEnemyDmgLabel(target)
+    }
+}
 export function bleed(status, target){}
 export function resistance(status, target){}
