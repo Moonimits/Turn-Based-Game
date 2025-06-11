@@ -66,6 +66,11 @@ export const consumables = [
     {id: 3, name: "Great Healing Potion",   heal:400, type: "heal", qty:1},
 ]
 
+export const enchantments = [
+    {id: 4, name: "Rage Enchant", amount:5 , type: "enchant", qty:1},
+    {id: 4, name: "Poison Enchant", amount:5 , type: "enchant", qty:1},
+]
+
 export function procItemEffect(player, enemy){
     const weaponEffect = player.equipWeapon.effect
 

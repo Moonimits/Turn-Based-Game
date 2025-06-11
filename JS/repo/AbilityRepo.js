@@ -107,6 +107,7 @@ export function vampiricHit(enemy,player){
 export function lacerate(enemy, player){{
     const lacerateDmg = enemy.skillSet.lacerate + Math.floor(player.maxhealth * 0.1)
     player.curhealth -= lacerateDmg
+    inflictStatus("bleed", 10, 5)
     updateHealthBar(player)
     var skillLog =`
         <div><b id="elog">${enemy.name}</b> used Lacerate, dealt <b>${lacerateDmg}dmg</b>.</div><hr>`;
@@ -116,6 +117,7 @@ export function lacerate(enemy, player){{
 export function bloodBreak(enemy, player){{
     const breakDmg = Math.floor(player.maxhealth * (enemy.skillSet.bloodBreak/100))
     player.curhealth -= breakDmg
+    inflictStatus("bleed", 20, 5)
     updateHealthBar(player)
     var skillLog =`
         <div><b id="elog">${enemy.name}</b> used Blood Break, dealt <b>${breakDmg}dmg</b> (${enemy.skillSet.bloodBreak}% MaxHP).</div><hr>`;
@@ -142,6 +144,25 @@ export function critical(enemy, player){{
     updateHealthBar(player);
     var skillLog = `
         <div><b id="elog">${enemy.name}</b>  performed a Crit Hit, dealt <b>${critDamage}dmg</b>.</div><hr>`;
+    log(skillLog);
+}}
+
+export function curse(enemy, player){{
+    const curseDmg = enemy.skillSet.curse;
+    const debuff = ["burn", "poison", "bleed", "weaken"];
+    const debuffRandom = Math.floor(Math.random() * debuff.length);
+    inflictStatus(player, objStatus(debuff[debuffRandom], curseDmg, 7))
+
+    var debuffLabel
+    if(debuff[debuffRandom] === "weaken"){
+        debuffLabel = `${debuff[debuffRandom]}, -${curseDmg}dmg`
+    }else{
+        debuffLabel = `${debuff[debuffRandom]}, ${curseDmg}dmg`
+    }
+
+
+    var skillLog = `
+        <div><b id="elog">${enemy.name}</b>  used Curse, inflicted <b>${debuffLabel}</b> for 7 turns.</div><hr>`;
     log(skillLog);
 }}
 
@@ -221,6 +242,7 @@ export function inflictStatus(target, newStatus){
     statuses.forEach(status => {
         const statusName = Object.keys(status)[0]
         if(statusName === newStatusName) {
+            if(statusName == "bleed") status.bleed += newStatus.bleed;
             status.duration = newStatus.duration
             exists = true;
         }

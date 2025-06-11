@@ -34,7 +34,7 @@ export function strength(status, target){
     const index = target.status.findIndex(stat => stat.strength) 
     const applied = target.status[index].applied;
     if(!applied){
-        target.damage += status.strength;;
+        target.damage += status.strength;
         target.status[index].applied = true
     }
     if(status.duration <= 0) {
@@ -73,7 +73,14 @@ export function weaken(status, target){
         updateEnemyDmgLabel(target)
     }
 }
-export function bleed(status, target){}
+export function bleed(status, target){
+    target.curhealth -= status.bleed
+    if(target instanceof Player){
+        updateHealthBar(target)
+    }else{
+        updateEnemyHealthBar(target)
+    }
+}
 export function resistance(status, target){}
 
 export function triggerStatus(target){
@@ -92,11 +99,10 @@ export function triggerStatus(target){
             const key = Object.keys(status)[0]
             const tickEffect = statusMap[key]
             
-            
             tickEffect(status,target)
-            target.status = statuses.filter((status) => status.duration != 0)
             status.duration--
         });
+        target.status = statuses.filter((status) => status.duration != 0)
     }
 
     if(target instanceof Player){
@@ -113,6 +119,7 @@ export function objStatus(name, amount, duration, perc = false){
         {burn: amount, duration: duration, lbl:"BRN"},
         {poison: amount, duration: duration, lbl:"PSN"},
         {regen: amount, duration: duration, lbl:"RGN"},
+        {bleed: amount, duration: duration, lbl:"BLD"},
     ]
 
     const statusName = name
