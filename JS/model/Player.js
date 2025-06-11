@@ -57,6 +57,7 @@ export class Player{
         this.maxhealth = health;
         this.curhealth = health;
         this.name = name;
+        this.basedamage = damage;
         this.damage = damage;
         this.heroClass = heroClass;
         this.skill = skill;

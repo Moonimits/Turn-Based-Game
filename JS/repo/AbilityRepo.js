@@ -1,8 +1,10 @@
 import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyDmgLabel, updatePlayerStatusLabel, updateEnemyStatusLabel, updatePlayerDmgLabel } from "../controller.js";
 import { equip } from "./PlayerRepo.js";
 import { Player } from "../model/Player.js";
-import { strength } from "./StatusRepo.js";
 import { attack } from "./EntityRepo.js";
+import { objStatus } from "./StatusRepo.js";
+import * as StatusEffect from "./StatusRepo.js";
+
 
 export function heal(enemy){
     const heal = enemy.skillSet.heal;
@@ -20,7 +22,7 @@ export function rage(enemy, player){
     const strengthStatus = enemy.status.find(stat => stat.strength)
     //If strength status exist just attack
     if(!strengthStatus){ 
-        inflictStatus(enemy, {strength: rage, duration: 3, lbl:"ATK+", applied: false})
+        inflictStatus(enemy, objStatus("strength", rage, 2))
     }else{
         attack(enemy,player);
         return false;
@@ -34,9 +36,9 @@ export function rage(enemy, player){
 
 export function weaken(enemy, player){
     const weaken = enemy.skillSet.weaken;
-    inflictStatus(player, {weaken: weaken, duration: 3, lbl:"ATK-", applied: false})
+    inflictStatus(player, objStatus("weaken", weaken, 5, true))
     var weaknessLog = `
-        <div><b id="elog">${enemy.name}</b> used Weaken, reduced your damage by <b>-${weaken}dmg</b>.</div><hr>`;    
+        <div><b id="elog">${enemy.name}</b> used Weaken, reduced your damage by <b>-${weaken}%</b>.</div><hr>`;    
     log(weaknessLog);
     updatePlayerDmgLabel(player)
 }
@@ -44,7 +46,7 @@ export function weaken(enemy, player){
 export function fireball(enemy,player){
     const skillDmg = enemy.skillSet.fireball;
     player.curhealth -= skillDmg;
-    if(probability(30)) inflictStatus(player, {burn: 25, duration: 3, lbl:"BRN"})
+    if(probability(30)) inflictStatus(player, objStatus("burn", 25, 3))
     updateHealthBar(player);
     var skillLog = `
         <div><b id="elog">${enemy.name}</b> used <b id='elog'>FireBall</b>, dealt <b>${skillDmg}dmg</b>.</div><hr>`;
@@ -54,7 +56,7 @@ export function fireball(enemy,player){
 export function firebreath(enemy,player){
     const skillDmg = enemy.skillSet.firebreath;
     player.curhealth -= skillDmg;
-    if(probability(50)) inflictStatus(player, {burn: 35, duration: 3, lbl:"BRN"})
+    if(probability(50)) inflictStatus(player, objStatus("burn", 35, 3))
     updateHealthBar(player);
     var skillLog = `
         <div><b id="elog">${enemy.name}</b> used <b id='elog'>Firebreath</b>, dealt <b>${skillDmg}dmg</b>.</div><hr>`;
@@ -73,7 +75,7 @@ export function jumpslash(enemy,player){
 export function venom(enemy,player){
     const venomDmg = enemy.skillSet.venom;
     player.curhealth -= venomDmg;
-    inflictStatus(player, {poison: venomDmg, duration: 5, lbl:"PSN"})
+    inflictStatus(player, objStatus("poison", venomDmg, 5))
     updateHealthBar(player);
     var skillLog = `
         <div><b id="elog">${enemy.name}</b> used <b id='elog'>Poison</b>, <b>You</b> take <b>${venomDmg}dmg</b> for 5 turns.</div><hr>`;
@@ -84,7 +86,7 @@ export function regeneration(enemy){
     const regen = enemy.skillSet.regeneration
     enemy.curhealth += regen
     enemy.curhealth = enemy.curhealth > enemy.maxhealth ? enemy.maxhealth : enemy.curhealth;
-    inflictStatus(enemy, {regen: regen, duration: 4, lbl:"RGN"})
+    inflictStatus(enemy, objStatus("regen", regen, 4))
     updateEnemyHealthBar(enemy)
     var skillLog = `
         <div><b id="elog">${enemy.name}</b> used <b id='elog'>Regeneration</b> healing ${regen}hp for 4 Turns.</div><hr>`;
@@ -135,7 +137,7 @@ export function healthSteal(enemy, player){{
 }}
 
 export function critical(enemy, player){{
-    const critDamage = enemy.damage * enemy.skillSet.critical;
+    const critDamage = Math.floor( enemy.damage * enemy.skillSet.critical);
     player.curhealth -= critDamage
     updateHealthBar(player);
     var skillLog = `
@@ -170,7 +172,7 @@ export function critHit(enemy, player){{
     const critHit = player.skill.critHit
     const critDamage = player.damage * critHit.val;
     enemy.curhealth -= critDamage
-    if(probability(30)) inflictStatus(enemy, {poison: 20, duration: 3, lbl:"PSN"})
+    if(probability(30)) inflictStatus(enemy, objStatus("poison", 20, 3))
     updateEnemyHealthBar(enemy);
     var skillLog = `
         <div><b>You</b> performed a ${critHit.name}, <b id='elog'>${enemy.name}</b> suffered <b>${critDamage}dmg</b>.</div><hr>`;
@@ -224,7 +226,11 @@ export function inflictStatus(target, newStatus){
         }
     });
 
-    if(!exists) target.status.push({...newStatus})
+    if(!exists) {
+        target.status.push({...newStatus})
+        const tickEffect = StatusEffect[newStatusName];
+        tickEffect(newStatus, target)
+    }
 
     if(target instanceof Player){
         updatePlayerStatusLabel(target)

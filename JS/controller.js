@@ -57,11 +57,13 @@ export function generateEnemy(){
                     for (const skillName in enemy.skill) {
                         if(typeof enemy.skill[skillName] === "number" && skillName != "critical"){
                             if(["heal","regeneration"].includes(skillName)){
-                                enemy.skill[skillName] += (Math.round(enemy.health * 0.2))
+                                enemy.skill[skillName] += (Math.round(enemy.health * 0.05))
                             }else if(["healtSteal","bloodBreak"].includes(skillName)){
                                 enemy.skill[skillName] += 2;
+                            }else if(["critical"].includes(skillName)){
+                                enemy.skill[skillName] += 0.5;
                             }else{
-                                enemy.skill[skillName] += (Math.round(enemy.damage * 0.2))
+                                enemy.skill[skillName] += (Math.round(enemy.damage * 0.05))
                             }
                         }
                     }
@@ -91,6 +93,7 @@ export function generateEnemy(){
         updateEnemyHealthBar(enemy)
         ename.innerHTML = enemy.name;
         edmg.innerHTML  = enemy.damage;
+        window.enemy = enemy;
 
         if(probability(50)){
             setTimeout(()=>{
@@ -102,8 +105,7 @@ export function generateEnemy(){
         }else{
             toggleButtons();
         }
-    });
-    
+    });    
 }
 
 export function generateItem(){

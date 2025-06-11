@@ -60,7 +60,7 @@ export const specialEnemy = [
         name: "Luxan Duelist",           
         health: 190,  
         damage: 50,  
-        skill: {disarm: true, critical: 3},    
+        skill: {disarm: true, critical: 2},    
         category: 'elite',
         exp: 25
     },
@@ -86,7 +86,7 @@ export const bosses = [
     {
         name: "Ultir", 
         health: 3000, 
-        damage: 60, 
+        damage: 80, 
         skill: {heal: 100, critical: 3},               
         category: 'hack',
         exp: 100,
@@ -94,8 +94,8 @@ export const bosses = [
     {
         name: "Malevolence", 
         health: 2500, 
-        damage: 50, 
-        skill: {rage: 100},               
+        damage: 80, 
+        skill: {rage: 100, weaken: 50},               
         category: 'hack',
         exp: 100,
     },

@@ -1,5 +1,6 @@
 import { updateEnemyHealthBar, updateHealthBar } from "../controller.js";
 import { inflictStatus, probability } from "../repo/AbilityRepo.js";
+import { objStatus } from "../repo/StatusRepo.js";
 
 export const weapons = [
     {name: "Book", damage: 1},
@@ -16,8 +17,8 @@ export const weapons = [
     {name: "War Hammer", damage: 10},
     {name: "War Axe", damage: 10},
     {name: "Blessed Dagger", damage: 6, effect:{name: "Heal", amount: 10, chance: 50}},
-    {name: "Red Spear", damage: 8, effect:{name: "Strength", type: "buff", chance: 35, status: {strength: 10, duration: 2, lbl:"ATK+", applied: false}}},
-    {name: "Venomous Dagger", damage: 9, effect:{name: "Posion", type: "inflict", chance: 35, status: {poison: 10, duration: 4, lbl:"PSN"}}},
+    {name: "Red Spear", damage: 8, effect:{name: "Strength", type: "buff", chance: 35, status: objStatus("strength", 10, 3)}},
+    {name: "Venomous Dagger", damage: 9, effect:{name: "Posion", type: "inflict", chance: 35, status: objStatus("poison", 10, 4)}},
 ];
 
 export const armors = [
@@ -46,9 +47,9 @@ export const specialWeapon = [
     {name: "Longinus Spear",        damage: 30,  category: 'special'},
     {name: "Soul Cipher",           damage: 45,  category: 'special', effect:{name: "Healthsteal", percent: 10}},
     {name: "Checkaliber",           damage: 30,  category: 'special'},
-    {name: "Xercero",               damage: 43,  category: 'special', effect:{name: "Flames", type:"inflict", chance: 35, status: {burn: 40, duration: 3, lbl:"BRN"}}},
-    {name: "Dragonus",              damage: 50,  category: 'special', effect:{name: "Flames", type:"inflict", chance: 50, status: {burn: 50, duration: 3, lbl:"BRN"}}},
-    {name: "Pxosk",                 damage: 48,  category: 'special', effect:{name: "Strength", type: "buff", chance: 35, status: {strength: 30, duration: 2, lbl:"ATK+", applied: false}}},
+    {name: "Xercero",               damage: 43,  category: 'special', effect:{name: "Flames", type:"inflict", chance: 35, status: objStatus("burn", 30, 3)}},
+    {name: "Dragonus",              damage: 50,  category: 'special', effect:{name: "Flames", type:"inflict", chance: 50, status: objStatus("burn", 50, 3)}},
+    {name: "Pxosk",                 damage: 48,  category: 'special', effect:{name: "Strength", type: "buff", chance: 35, status: objStatus("strength", 30, 2)}},
     {name: "Wylter Pol",            damage: 35,  category: 'special', effect:{name: "Lifebreak", percent: 5}},
     {name: "Marcosoft: #Violence",  damage: 100, category: 'hack'},
 ]
