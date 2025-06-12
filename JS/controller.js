@@ -54,33 +54,30 @@ export function generateEnemy(){
         const entity       = enemyPool[randomizer];
         enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp);
     
-        if(round % 25 == 0){
-            eStatIncrease++;
-            for(var i = 1; i <= eStatIncrease; i++){
-                if(["basic", "elite"].includes(enemy.category)){
-                    enemy.maxhealth += (50 + (Math.round(enemy.maxhealth * (player.level/100))));
-                    enemy.curhealth = enemy.maxhealth;
-                    enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
-                    for (const skillName in enemy.skill) {
-                        if(typeof enemy.skill[skillName] === "number" && skillName != "critical"){
-                            if(["heal","regeneration"].includes(skillName)){
-                                enemy.skill[skillName] += (Math.round(enemy.health * 0.05))
-                            }else if(["healtSteal","bloodBreak"].includes(skillName)){
-                                enemy.skill[skillName] += 2;
-                            }else if(["critical"].includes(skillName)){
-                                enemy.skill[skillName] += 0.5;
-                            }else{
-                                enemy.skill[skillName] += (Math.round(enemy.damage * 0.05))
-                            }
+        if(round % 2 == 0) eStatIncrease++;
+        for(var i = 1; i <= eStatIncrease; i++){
+            if(["basic", "elite"].includes(enemy.category)){
+                enemy.maxhealth += (50 + (Math.round(enemy.maxhealth * (player.level/100))));
+                enemy.curhealth = enemy.maxhealth;
+                enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
+                for (const skillName in enemy.skill) {
+                    if(typeof enemy.skill[skillName] === "number" && skillName != "critical"){
+                        if(["heal","regeneration"].includes(skillName)){
+                            enemy.skill[skillName] += (Math.round(enemy.health * 0.05))
+                        }else if(["healtSteal","bloodBreak"].includes(skillName)){
+                            enemy.skill[skillName] += 2;
+                        }else if(["critical"].includes(skillName)){
+                            enemy.skill[skillName] += 0.5;
+                        }else{
+                            enemy.skill[skillName] += (Math.round(enemy.damage * 0.05))
                         }
                     }
                 }
+            } else if(["boss"].includes(enemy.category)){
                 if(round >= 150){
-                    if(["boss"].includes(enemy.category)){
-                        enemy.maxhealth += (50 + (Math.round(enemy.maxhealth * (player.level/100))));
-                        enemy.curhealth = enemy.maxhealth;
-                        enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
-                    }
+                    enemy.maxhealth += (50 + (Math.round(enemy.maxhealth * (player.level/100))));
+                    enemy.curhealth = enemy.maxhealth;
+                    enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
                 }
             }
         }
