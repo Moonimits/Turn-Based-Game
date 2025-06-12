@@ -254,7 +254,6 @@ export const itemPool = {
     ],
     consumable:[
         ...consumables,
-        ...consumables,
         ...enchantments
     ]
 }
