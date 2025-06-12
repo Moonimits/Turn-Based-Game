@@ -54,7 +54,6 @@ export function generateEnemy(){
         const entity       = enemyPool[randomizer];
         enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp);
     
-        if(round % 2 == 0) eStatIncrease++;
         for(var i = 1; i <= eStatIncrease; i++){
             if(["basic", "elite"].includes(enemy.category)){
                 enemy.maxhealth += (50 + (Math.round(enemy.maxhealth * (player.level/100))));
@@ -493,6 +492,7 @@ function playerHealthChecker(){
 function roundUpdate(){
     round++
     roundCounter.innerHTML = `Round: ${round}`
+    if(round % 25 == 0) eStatIncrease++;
 }
 
 
