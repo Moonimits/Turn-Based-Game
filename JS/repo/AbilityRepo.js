@@ -170,6 +170,7 @@ export function disarm(enemy, player){
     player.curhealth -= disarmDmg
     updateHealthBar(player);
     equip(player, "weapon", disarm);
+    delete player.equipWeapon;
     var skillLog = `
         <div><b id="elog">${enemy.name}</b> disarmed your weapon. dealt <b>${disarmDmg}dmg</b>.</div><hr>`;
     log(skillLog);
