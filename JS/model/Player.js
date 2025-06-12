@@ -69,10 +69,7 @@ export class Player{
         this.level = 1;
         this.expreq = 100;
         this.exp = 0;
-        this.status = [
-            {poison: 5, duration: 3, lbl:"PSN"},
-            {strength: 10, duration: 2, lbl:"ATK+", applied: false, percent: false},
-        ]
+        this.status = []
         this.inventory = []
     }
 }

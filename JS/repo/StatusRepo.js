@@ -55,7 +55,7 @@ export function weaken(status, target){
             weaknessAmount = target.damage * (status.weaken / 100);
             target.damage -= weaknessAmount;
         }else{
-            target.damage -= status.weakness;
+            target.damage -= status.weaken;
         }
         target.status[index].applied = true
     }
@@ -63,7 +63,7 @@ export function weaken(status, target){
         if(status.percent){
             target.damage += weaknessAmount;
         }else{
-            target.damage += status.weakness
+            target.damage += status.weaken
         }
     }
 
@@ -73,6 +73,7 @@ export function weaken(status, target){
         updateEnemyDmgLabel(target)
     }
 }
+
 export function bleed(status, target){
     target.curhealth -= status.bleed
     if(target instanceof Player){
@@ -81,6 +82,7 @@ export function bleed(status, target){
         updateEnemyHealthBar(target)
     }
 }
+
 export function resistance(status, target){}
 
 export function triggerStatus(target){
@@ -102,7 +104,7 @@ export function triggerStatus(target){
             tickEffect(status,target)
             status.duration--
         });
-        target.status = statuses.filter((status) => status.duration != 0)
+        target.status = statuses.filter((status) => (status.duration > 0 || (status.applied != undefined && status.duration >= 0)))
     }
 
     if(target instanceof Player){
@@ -125,5 +127,5 @@ export function objStatus(name, amount, duration, perc = false){
     const statusName = name
     const status = statusArray.find(status => status[statusName]);
 
-    return status;
+    return {...status};
 }

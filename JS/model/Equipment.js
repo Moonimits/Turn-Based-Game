@@ -15,10 +15,10 @@ export const weapons = [
     {name: "Mace", damage: 7},
     {name: "Halberd", damage: 10},
     {name: "War Hammer", damage: 10},
-    {name: "War Axe", damage: 10},
-    {name: "Blessed Dagger", damage: 6, effect:{name: "Heal", amount: 10, chance: 50}},
-    {name: "Red Spear", damage: 8, effect:{name: "Strength", type: "buff", chance: 35, status: objStatus("strength", 10, 3)}},
-    {name: "Venomous Dagger", damage: 9, effect:{name: "Posion", type: "inflict", chance: 35, status: objStatus("poison", 10, 4)}},
+    {name: "War Axe", damage: 10, effect: [objEffect("bleed", 3, 50, 6)]},
+    {name: "Blessed Dagger", damage: 6, effect:[objEffect("heal", 10, 50)]},
+    {name: "Red Spear", damage: 8, effect:[objEffect("strength", 10)]},
+    {name: "Venomous Dagger", damage: 9, effect:[objEffect("poison", 10, 35, 4)]},
 ];
 
 export const armors = [
@@ -43,14 +43,14 @@ export const specialArmor = [
 ]
 
 export const specialWeapon = [
-    {name: "Altaric Sword",         damage: 25,  category: 'special', effect:{name: "Lifesteal", percent: 20}},
+    {name: "Altaric Sword",         damage: 25,  category: 'special', effect:[objEffect("lifesteal", 20)]},
     {name: "Longinus Spear",        damage: 30,  category: 'special'},
-    {name: "Soul Cipher",           damage: 45,  category: 'special', effect:{name: "Healthsteal", percent: 10}},
+    {name: "Soul Cipher",           damage: 45,  category: 'special', effect:[objEffect("healthsteal", 10)]},
     {name: "Checkaliber",           damage: 30,  category: 'special'},
-    {name: "Xercero",               damage: 43,  category: 'special', effect:{name: "Flames", type:"inflict", chance: 35, status: objStatus("burn", 30, 3)}},
-    {name: "Dragonus",              damage: 50,  category: 'special', effect:{name: "Flames", type:"inflict", chance: 50, status: objStatus("burn", 50, 3)}},
-    {name: "Pxosk",                 damage: 48,  category: 'special', effect:{name: "Strength", type: "buff", chance: 35, status: objStatus("strength", 30, 2)}},
-    {name: "Wylter Pol",            damage: 35,  category: 'special', effect:{name: "Lifebreak", percent: 5}},
+    {name: "Xercero",               damage: 43,  category: 'special', effect:[objEffect("flames", 30)]},
+    {name: "Dragonus",              damage: 50,  category: 'special', effect:[objEffect("flames", 50, 50)]},
+    {name: "Pxosk",                 damage: 48,  category: 'special', effect:[objEffect("strength", 30, 35, 2)]},
+    {name: "Wylter Pol",            damage: 35,  category: 'special', effect:[objEffect("lifebreak", 5)]},
     {name: "Marcosoft: #Violence",  damage: 100, category: 'hack'},
 ]
 
@@ -67,49 +67,150 @@ export const consumables = [
 ]
 
 export const enchantments = [
-    {id: 4, name: "Rage Enchant", amount:5 , type: "enchant", qty:1},
-    {id: 4, name: "Poison Enchant", amount:5 , type: "enchant", qty:1},
+    {id: 4, name: "Flames Enchant", effect: "Flames", amount:5 , type: "enchant", qty:1},
+    {id: 5, name: "Poison Enchant", effect: "Poison", amount:5 , type: "enchant", qty:1},
+    {id: 6, name: "LifeSteal Enchant", effect: "Lifesteal", amount:2 , type: "enchant", qty:1},
+    {id: 7, name: "Bleed Enchant", effect: "Bleed", amount:3 , type: "enchant", qty:1},
+    {id: 8, name: "Healing Enchant", effect: "Heal", amount:5 , type: "enchant", qty:1},
+    {id: 9, name: "Strength Enchant", effect: "Strength", amount:5 , type: "enchant", qty:1},
+    {id: 10, name: "Lifebreak Enchant", effect: "Lifebreak", amount:1 , type: "enchant", qty:1},
 ]
 
-export function procItemEffect(player, enemy){
-    const weaponEffect = player.equipWeapon.effect
+//Enchant Items
+export function enchant(player, enchantment){
+    const weaponEffects = player.equipWeapon.effect
+    
+    if(weaponEffects){
+        const weaponEffect =  weaponEffects.find( effect => effect.name == enchantment.effect)
 
-    if(weaponEffect)
-    {
-        const effectName = Object.values(weaponEffect)[0];
-
-        if(effectName == "Lifesteal"){
-            player.curhealth += Math.round(player.damage * (weaponEffect.percent/100));
-            if(player.curhealth > player.maxhealth) player.curhealth = player.maxhealth
-            updateHealthBar(player)
-        }else if(effectName == "Lifebreak"){
-            enemy.curhealth -= Math.round(enemy.curhealth * (weaponEffect.percent/100));
-            const extraDmgLbl = `+(${weaponEffect.percent}%HP)`;
-
-            return extraDmgLbl;
-        }else if(effectName == "Healthsteal"){
-            if(enemy.curhealth <= 0){
-                player.maxhealth += Math.round(enemy.maxhealth * (weaponEffect.percent/100));
-                player.curhealth += Math.round(enemy.maxhealth * (weaponEffect.percent/100));
-                updateHealthBar(player)
+        if(weaponEffect){
+            if(["inflict","buff"].includes(weaponEffect.type)){
+                const key = Object.keys(weaponEffect.status)[0]
+                weaponEffect.status[key] += enchantment.amount;
+            }else if(["onhit"].includes(weaponEffect.type)){
+                if(weaponEffect.mode == "flat"){
+                    weaponEffect.amount += enchantment.amount
+                }else if(weaponEffect.mode == "percentage"){
+                    weaponEffect.percent += enchantment.amount
+                }
             }
-        }else if(effectName == "Heal"){
-            if(probability(weaponEffect.chance)){
-                player.curhealth += weaponEffect.amount;
+        }else{
+            player.equipWeapon.effect.push(objEffect(enchantment.effect, enchantment.amount))
+        }
+        
+    }else{
+        player.equipWeapon.effect = [objEffect(enchantment.effect, enchantment.amount)];
+    }
+}
+
+//Proc item Effects
+export function procItemEffect(player, enemy){
+    const weaponEffects = player.equipWeapon.effect
+    let extraDmgLbl = '';
+
+    if(weaponEffects)
+    {
+        weaponEffects.forEach(weaponEffect => {
+            const effectName = weaponEffect.name;
+    
+            if(effectName == "Lifesteal"){
+                player.curhealth += Math.round(player.damage * (weaponEffect.percent/100));
                 if(player.curhealth > player.maxhealth) player.curhealth = player.maxhealth
                 updateHealthBar(player)
+            }else if(effectName == "Lifebreak"){
+                enemy.curhealth -= Math.round(enemy.curhealth * (weaponEffect.percent/100));
+                extraDmgLbl = `+(${weaponEffect.percent}%HP)`;
+            }else if(effectName == "Healthsteal"){
+                if(enemy.curhealth <= 0){
+                    player.maxhealth += Math.round(enemy.maxhealth * (weaponEffect.percent/100));
+                    player.curhealth += Math.round(enemy.maxhealth * (weaponEffect.percent/100));
+                    updateHealthBar(player)
+                }
+            }else if(effectName == "Heal"){
+                if(probability(weaponEffect.chance)){
+                    player.curhealth += weaponEffect.amount;
+                    if(player.curhealth > player.maxhealth) player.curhealth = player.maxhealth
+                    updateHealthBar(player)
+                }
+            }else if(weaponEffect.type == "buff"){
+                if(probability(weaponEffect.chance)){
+                    inflictStatus(player, weaponEffect.status)
+                }
+            }else if(weaponEffect.type == "inflict"){
+                if(probability(weaponEffect.chance)){
+                    inflictStatus(enemy, weaponEffect.status)
+                }
             }
-        }else if(weaponEffect.type == "buff"){
-            if(probability(weaponEffect.chance)){
-                inflictStatus(player, weaponEffect.status)
-            }
-        }else if(weaponEffect.type == "inflict"){
-            if(probability(weaponEffect.chance)){
-                inflictStatus(enemy, weaponEffect.status)
-            }
-        }
+        });
     }
-    return '';
+    return extraDmgLbl;
+}
+
+//Item Effects
+function objEffect(effectName, val, chance = 35, inflictDuration = 3){
+    const weaponEffects = [
+        {
+            name: "Heal", 
+            type: "onhit", 
+            mode: "flat", 
+            amount: val, chance: chance,
+            desc: `${chance}% chance to heal <b class='hp'>${val}hp<b>`,
+        },
+        {
+            name: "Lifesteal", 
+            type:"onhit", 
+            mode: "percentage", 
+            percent: val,
+            desc: `${val}% Lifesteal`,
+        },
+        {
+            name: "Lifebreak", 
+            type:"onhit", 
+            mode: "percentage", 
+            percent: val,
+            desc: `Lifebreak: Deals ${val}%hp damage`,
+        },
+        {
+            name: "Healthsteal", 
+            type:"onkill", 
+            mode: "percentage", 
+            percent: val,
+            desc: `Healtsteal: Gain enemy's ${val}% MaxHp on kill`,
+        },
+        {
+            name: "Flames", 
+            type:"inflict", 
+            chance: chance, 
+            status: objStatus("burn", val, inflictDuration),
+            desc: `Flames: ${chance}% chance to inflict ${val} burn dmg for ${inflictDuration} rounds`,
+        },
+        {
+            name: "Poison", 
+            type: "inflict", 
+            chance: chance, 
+            status: objStatus("poison", val, inflictDuration),
+            desc: `Poison: ${chance}% chance to inflict ${val} poison dmg for ${inflictDuration} rounds`,
+        },
+        {
+            name: "Bleed", 
+            type: "inflict", 
+            chance: chance, 
+            status: objStatus("bleed", val, inflictDuration),
+            desc: `Bleed: ${chance}% chance to inflict ${val} bleed dmg for ${inflictDuration} rounds`,
+        },
+        {
+            name: "Strength", 
+            type: "buff", 
+            chance: chance, 
+            status: objStatus("strength", val, inflictDuration),
+            desc: `Strength: ${chance}% chance to gain ${val} bonus dmg for ${inflictDuration} rounds`,
+        },
+    ];
+
+    const name = effectName;
+    const effect = weaponEffects.find( eff => eff.name.toLocaleLowerCase() == name.toLowerCase());
+    
+    return {...effect};
 }
 
 export const itemPool = {
@@ -126,6 +227,8 @@ export const itemPool = {
         ...specialArmor
     ],
     consumable:[
-        ...consumables
+        ...consumables,
+        ...consumables,
+        ...enchantments
     ]
 }

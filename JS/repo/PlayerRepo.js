@@ -1,16 +1,16 @@
 import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyStatusLabel, updatePlayerStatusLabel } from "../controller.js";
-import { procItemEffect } from "../model/Equipment.js";
+import { enchant, procItemEffect } from "../model/Equipment.js";
 import * as Abilities from "./AbilityRepo.js";
 import {triggerStatus} from "./StatusRepo.js";
 
 export function attackEnemy(enemy, player){
     return new Promise((resolve)=>{
         var extraDmgLbl = '';
+        triggerStatus(player)
         enemy.curhealth -= player.damage;
         if(player.equipWeapon) {
             extraDmgLbl = procItemEffect(player, enemy);
         }
-        triggerStatus(player)
         updateEnemyHealthBar(enemy);
         var attackLog = `
             <div><b>You</b> attacked <b id="elog">${enemy.name}</b>, dealt <b>${player.damage}${extraDmgLbl}dmg</b>.</div><hr>`;    
@@ -22,7 +22,6 @@ export function attackEnemy(enemy, player){
 
 export function useItem(player, itemId){
     return new Promise((resolve)=>{
-        triggerStatus(player)
         const item = player.inventory.find(item => item.id == itemId);
         if(item.type == 'heal')
         {
@@ -35,6 +34,13 @@ export function useItem(player, itemId){
             log(healLog);
             if(player.skillCd != 0) player.skillCd--;
             updateHealthBar(player);
+        }
+        else if(item.type == 'enchant')
+        {
+            enchant(player, item)
+            var enchantlog = `
+                <div><b>You</b> used ${item.name}, Your weapon now has increased <b>${item.effect} Effect</b>.</div><hr>`;    
+            log(enchantlog);
         }
         item.qty--;
         player.inventory = player.inventory.filter(item => item.qty != 0);
@@ -60,7 +66,7 @@ export function useSkill(enemy, player){
 export function equip(player, type, equipment){
     if(type == 'weapon'){
         if(player.equipWeapon) player.damage -= player.equipWeapon.damage;
-        player.equipWeapon = equipment;
+        player.equipWeapon = {...equipment};
         player.damage += equipment.damage;
         dmg.innerHTML = player.damage;
     }else if (type == 'armor'){
@@ -68,7 +74,7 @@ export function equip(player, type, equipment){
             player.maxhealth -= player.equipArmor.health
             player.curhealth -= player.equipArmor.health
         };
-        player.equipArmor = equipment;
+        player.equipArmor = {...equipment};
         player.maxhealth += equipment.health;
         player.curhealth += equipment.health;
         player.curhealth = player.curhealth > player.maxhealth ? player.maxhealth : player.curhealth;

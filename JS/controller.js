@@ -41,6 +41,7 @@ const edmg  = document.getElementById('edmg');
 const est  = document.getElementById('est');
 var score   = 0;
 var round = 0;
+var eStatIncrease = 0
 var enemy, player, equipment, itemType;
 //================ HTML ELEMENTS ===========================//
 
@@ -49,10 +50,16 @@ export function generateEnemy(){
     roundUpdate()
     increaseEnemyPool(round).then(()=>{
 
+        const randomizer   = Math.floor(Math.random() * enemyPool.length);
+        const entity       = enemyPool[randomizer];
+        enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp);
+    
         if(round % 25 == 0){
-            enemyPool.forEach(enemy => {
+            eStatIncrease++;
+            for(var i = 1; i <= eStatIncrease; i++){
                 if(["basic", "elite"].includes(enemy.category)){
-                    enemy.health += (50 + (Math.round(enemy.health * (player.level/100))));
+                    enemy.maxhealth += (50 + (Math.round(enemy.maxhealth * (player.level/100))));
+                    enemy.curhealth = enemy.maxhealth;
                     enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
                     for (const skillName in enemy.skill) {
                         if(typeof enemy.skill[skillName] === "number" && skillName != "critical"){
@@ -68,19 +75,16 @@ export function generateEnemy(){
                         }
                     }
                 }
-            });
-            if(round >= 150){
-                if(["boss"].includes(enemy.category)){
-                    enemy.health += (50 + (Math.round(enemy.health * (player.level/100))));
-                    enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
+                if(round >= 150){
+                    if(["boss"].includes(enemy.category)){
+                        enemy.maxhealth += (50 + (Math.round(enemy.maxhealth * (player.level/100))));
+                        enemy.curhealth = enemy.maxhealth;
+                        enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
+                    }
                 }
             }
         }
 
-        const randomizer   = Math.floor(Math.random() * enemyPool.length);
-        const entity       = enemyPool[randomizer];
-        enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp);
-    
         //enemy name style
         const enemyDetails = `
             <div class='text-danger fw-bold'>!ENEMY ENCOUNTERED!</div>
@@ -134,11 +138,8 @@ export function generateItem(){
         var effect = equipment.effect;
         var effectLabel = '';
         if(effect){
-            var effectname = effect.name;
-            var amount = effect.amount ?? '';
-            var chance = effect.chance ? `(${effect.chance}%)` : '';
-            var percent = effect.percent ? `(${effect.percent}%)` : '';
-            effectLabel = `<div><b>Effect:</b> ${amount} ${effectname} ${chance||percent}</div>`
+            const effects = effect.map(eff => eff.desc).join(""); 
+            effectLabel = `<div><b>Effect:</b> ${effects}</div>`
         }
 
         itemDetails = `
@@ -155,15 +156,17 @@ export function generateItem(){
     }else{
         const statsMap = {
             heal: `${equipment.heal} heal`,
+            enchant: `${equipment.effect}: +${equipment.amount}`,
         } 
         var stats = statsMap[equipment.type];
+        var disabled = (equipment.type == "enchant" && !player.equipWeapon) ? 'disabled' : '';
         itemDetails = `
             <div class='text-success fw-bold'>!YOU FOUND AN ITEM!</div>
             <div><b>Name:</b> <span class='${equipment.category ?? ''}'>${equipment.name}</span></div>
             <div><b>Item Stat:</b> ${stats}</div>
             <div id='equipButton'>
                 <span class='btn btn-sm btn-success' id='equip'>Take</span> 
-                <span class='btn btn-sm btn-primary' data-itemid='${equipment.id}' id='use'>Use</span>
+                <span class='btn btn-sm btn-primary ${disabled}' data-itemid='${equipment.id}' id='use'>Use</span>
             </div>
             <hr>`;
     }
@@ -285,14 +288,23 @@ attackBtn.addEventListener('click', ()=>{
 showInv.addEventListener('click', ()=>{
     if(!attackBtn.classList.contains("disabled")){
         inventory.classList.add("show")
-        console.log(player.inventory)
         const inventoryItems = player.inventory.map((item)=>{
-            var itemEffect = item.type == "heal" ? `${item.heal} heal` : '';
-            return `<tr>
-                        <td class="text-start">${item.name}</td>
-                        <td>${itemEffect}</td>
-                        <td><button class="btn btn-success btn-sm" data-itemid="${item.id}" id="useItem">Use ${item.qty}x</button></td>
-                    </tr>`
+            var itemRow;
+            if(item.type == "heal"){
+                itemRow = `<tr>
+                            <td class="text-start">${item.name}</td>
+                            <td>${item.heal} Heal</td>
+                            <td><button class="btn btn-success btn-sm" data-itemid="${item.id}" id="useItem">Use ${item.qty}x</button></td>
+                        </tr>`
+            }else if(item.type == "enchant"){
+                var disabled = (player.equipWeapon) ? '' : 'disabled';
+                itemRow = `<tr>
+                            <td class="text-start">${item.name}</td>
+                            <td>${item.effect}: +${item.amount}</td>
+                            <td><button class="btn btn-success btn-sm ${disabled}" data-itemid="${item.id}" id="useItem">Use ${item.qty}x</button></td>
+                        </tr>`
+            }
+            return itemRow;
         }).join('')
         itemSlot.innerHTML = inventoryItems;
     }
@@ -305,16 +317,8 @@ closeInv.addEventListener('click', ()=>{
 inventory.addEventListener('click', (e)=>{
     if(e.target.id === "useItem"){
         const itemId = e.target.dataset.itemid
-        toggleButtons();
         inventory.classList.remove("show")
-        useItem(player, itemId).then(()=>{
-            setTimeout(()=>{
-                randomBehavior(enemy, player);
-                if(enemy.curhealth <= 0){
-                    handleDefeatEnemy(enemy, player)
-                }
-            },1000)
-        });
+        useItem(player, itemId);
     }
 })
 

@@ -84,8 +84,6 @@ export function venom(enemy,player){
 
 export function regeneration(enemy){
     const regen = enemy.skillSet.regeneration
-    enemy.curhealth += regen
-    enemy.curhealth = enemy.curhealth > enemy.maxhealth ? enemy.maxhealth : enemy.curhealth;
     inflictStatus(enemy, objStatus("regen", regen, 4))
     updateEnemyHealthBar(enemy)
     var skillLog = `
@@ -107,7 +105,7 @@ export function vampiricHit(enemy,player){
 export function lacerate(enemy, player){{
     const lacerateDmg = enemy.skillSet.lacerate + Math.floor(player.maxhealth * 0.1)
     player.curhealth -= lacerateDmg
-    inflictStatus("bleed", 10, 5)
+    inflictStatus(player, objStatus("bleed", 10, 5))
     updateHealthBar(player)
     var skillLog =`
         <div><b id="elog">${enemy.name}</b> used Lacerate, dealt <b>${lacerateDmg}dmg</b>.</div><hr>`;
@@ -117,7 +115,7 @@ export function lacerate(enemy, player){{
 export function bloodBreak(enemy, player){{
     const breakDmg = Math.floor(player.maxhealth * (enemy.skillSet.bloodBreak/100))
     player.curhealth -= breakDmg
-    inflictStatus("bleed", 20, 5)
+    inflictStatus(player, objStatus("bleed", 20, 5))
     updateHealthBar(player)
     var skillLog =`
         <div><b id="elog">${enemy.name}</b> used Blood Break, dealt <b>${breakDmg}dmg</b> (${enemy.skillSet.bloodBreak}% MaxHP).</div><hr>`;
@@ -128,8 +126,8 @@ export function healthSteal(enemy, player){{
     const healthSteal = 10 + Math.floor(player.maxhealth * (enemy.skillSet.healthSteal/100))
     player.maxhealth -= healthSteal
     enemy.maxhealth += healthSteal
-    enemy.curhealth += healthSteal + (Math.floor((enemy.maxhealth - enemy.curhealth)*0.35));
-    if(probability(50)) inflictStatus(enemy, {regen:10, duration: 5, lbl: "RGN"})
+    enemy.curhealth += healthSteal + (Math.floor((enemy.maxhealth - enemy.curhealth)*0.10));
+    if(probability(50)) inflictStatus(enemy, objStatus("regen", 20, 5))
     if(player.curhealth >= player.maxhealth) player.curhealth = player.maxhealth
     updateEnemyHealthBar(enemy)
     updateHealthBar(player)
