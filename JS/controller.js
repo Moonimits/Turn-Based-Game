@@ -59,16 +59,16 @@ export function generateEnemy(){
                 enemy.maxhealth += (50 + (Math.round(enemy.maxhealth * (player.level/100))));
                 enemy.curhealth = enemy.maxhealth;
                 enemy.damage += (10 + (Math.round(enemy.damage * (player.level/100))));
-                for (const skillName in enemy.skill) {
-                    if(typeof enemy.skill[skillName] === "number" && skillName != "critical"){
+                for (const skillName in enemy.skillSet) {
+                    if(typeof enemy.skillSet[skillName] === "number"){
                         if(["heal","regeneration"].includes(skillName)){
-                            enemy.skill[skillName] += (Math.round(enemy.health * 0.05))
+                            enemy.skillSet[skillName] += (Math.round(enemy.health * 0.05))
                         }else if(["healtSteal","bloodBreak"].includes(skillName)){
-                            enemy.skill[skillName] += 2;
+                            enemy.skillSet[skillName] += 2;
                         }else if(["critical"].includes(skillName)){
-                            enemy.skill[skillName] += 0.5;
+                            enemy.skillSet[skillName] += 0.2;
                         }else{
-                            enemy.skill[skillName] += (Math.round(enemy.damage * 0.05))
+                            enemy.skillSet[skillName] += (Math.round(enemy.damage * 0.05))
                         }
                     }
                 }
