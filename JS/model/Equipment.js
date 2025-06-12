@@ -1,4 +1,4 @@
-import { updateEnemyHealthBar, updateHealthBar } from "../controller.js";
+import { updateEnemyHealthBar, updateHealthBar, updatePlayerDmgLabel } from "../controller.js";
 import { inflictStatus, probability } from "../repo/AbilityRepo.js";
 import { objStatus } from "../repo/StatusRepo.js";
 
@@ -43,15 +43,26 @@ export const specialArmor = [
 ]
 
 export const specialWeapon = [
-    {name: "Altaric Sword",         damage: 25,  category: 'special', effect:[objEffect("lifesteal", 20)]},
-    {name: "Longinus Spear",        damage: 30,  category: 'special'},
-    {name: "Soul Cipher",           damage: 45,  category: 'special', effect:[objEffect("healthsteal", 10)]},
-    {name: "Checkaliber",           damage: 30,  category: 'special'},
-    {name: "Xercero",               damage: 43,  category: 'special', effect:[objEffect("flames", 30)]},
-    {name: "Dragonus",              damage: 50,  category: 'special', effect:[objEffect("flames", 50, 50)]},
-    {name: "Pxosk",                 damage: 48,  category: 'special', effect:[objEffect("strength", 30, 35, 2)]},
-    {name: "Wylter Pol",            damage: 35,  category: 'special', effect:[objEffect("lifebreak", 5)]},
-    {name: "Marcosoft: #Violence",  damage: 100, category: 'hack'},
+    {name: "Altaric Sword",     damage: 25,  category: 'special', effect:[objEffect("lifesteal", 20)]},
+    {name: "Longinus Spear",    damage: 30,  category: 'special', effect:[objEffect("strength", 20, 50, 2)]},
+    {name: "Soul Cipher",       damage: 45,  category: 'special', effect:[objEffect("lifesteal", 30)]},
+    {name: "Checkaliber",       damage: 30,  category: 'special', effect:[objEffect("heal", 20, 50)]},
+    {name: "Xercero",           damage: 43,  category: 'special', effect:[objEffect("flames", 30)]},
+    {name: "Dragonus",          damage: 50,  category: 'special', effect:[objEffect("flames", 50, 50)]},
+    {name: "Pxosk",             damage: 48,  category: 'special', effect:[objEffect("strength", 30, 35, 2)]},
+    {name: "Wylter Pol",        damage: 35,  category: 'special', effect:[objEffect("lifebreak", 5)]},
+    {name: "Vendragon",         damage: 47,  category: 'special', effect:[objEffect("poison", 60, 70, 3)]},
+    {name: "Abnormality",       damage: 47,  category: 'special', effect:[objEffect("poison", 15, 50, 3), objEffect("flames", 15, 50, 3), objEffect("bleed", 15, 50, 3)]},
+    {name: "Crimson Edge",      damage: 25,  category: 'special', effect:[objEffect("bleed", 10, 70, 5)]},
+    {name: "Excalibur",         damage: 55,  category: 'special', effect:[objEffect("heal", 50, 50)]},
+    {name: "Divine Greatsword", damage: 65,  category: 'special', effect:[objEffect("heal", 100, 90)]},
+    {name: "Draconic Twinblade", damage: 45,  category: 'special', effect:[objEffect("lifesteal", 50)]},
+];
+
+export const ultraWeapons = [
+    {name: "Marcosoft: #Violence",        damage: 130, category: 'hack'},
+    {name: "Charter Arsenal: Absorber",   damage: 35,  category: 'hack', effect:[objEffect("healthsteal", 50)]},
+    {name: "Charter: Malefic Permanence", damage: 10,  category: 'hack', effect:[objEffect("damagegain", 10)]},
 ]
 
 export const consumables = [
@@ -126,6 +137,11 @@ export function procItemEffect(player, enemy){
                     player.curhealth += Math.round(enemy.maxhealth * (weaponEffect.percent/100));
                     updateHealthBar(player)
                 }
+            }else if(effectName == "Damagegain"){
+                if(enemy.curhealth <= 0){
+                    player.damage += Math.round(player.damage * (weaponEffect.percent/100));
+                    updatePlayerDmgLabel(player)
+                }
             }else if(effectName == "Heal"){
                 if(probability(weaponEffect.chance)){
                     player.curhealth += weaponEffect.amount;
@@ -175,7 +191,14 @@ function objEffect(effectName, val, chance = 35, inflictDuration = 3){
             type:"onkill", 
             mode: "percentage", 
             percent: val,
-            desc: `Healtsteal: Gain enemy's ${val}% MaxHp on kill`,
+            desc: `Healtsteal: Permanently gain enemy's ${val}% MaxHp on kill`,
+        },
+        {
+            name: "Damagegain", 
+            type:"onkill", 
+            mode: "percentage", 
+            percent: val,
+            desc: `DamageGain: Permanently gain ${val}%Dmg on kill`,
         },
         {
             name: "Flames", 
@@ -218,7 +241,10 @@ export const itemPool = {
         ...weapons,
         ...weapons,
         ...weapons,
-        ...specialWeapon
+        ...weapons,
+        ...specialWeapon,
+        ...specialWeapon,
+        ...ultraWeapons
     ],
     armor: [
         ...armors,

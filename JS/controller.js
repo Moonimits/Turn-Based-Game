@@ -62,7 +62,7 @@ export function generateEnemy(){
                 for (const skillName in enemy.skillSet) {
                     if(typeof enemy.skillSet[skillName] === "number"){
                         if(["heal","regeneration"].includes(skillName)){
-                            enemy.skillSet[skillName] += (Math.round(enemy.health * 0.05))
+                            enemy.skillSet[skillName] += Math.round(enemy.maxhealth * 0.05)
                         }else if(["healtSteal","bloodBreak"].includes(skillName)){
                             enemy.skillSet[skillName] += 2;
                         }else if(["critical"].includes(skillName)){
@@ -134,7 +134,7 @@ export function generateItem(){
         var effect = equipment.effect;
         var effectLabel = '';
         if(effect){
-            const effects = effect.map(eff => eff.desc).join(""); 
+            const effects = effect.map(eff => eff.desc).join("<br>"); 
             effectLabel = `<div><b>Effect:</b> ${effects}</div>`
         }
 
