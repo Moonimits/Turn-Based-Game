@@ -65,7 +65,7 @@ export function useSkill(enemy, player){
 export function equip(player, type, equipment){
     if(type == 'weapon'){
         if(player.equipWeapon) player.damage -= player.equipWeapon.damage;
-        player.equipWeapon = {...equipment};
+        player.equipWeapon = structuredClone(equipment);
         player.damage += equipment.damage;
         dmg.innerHTML = player.damage;
     }else if (type == 'armor'){

@@ -28,7 +28,7 @@
             padding: 5px;
             top: 0;
             left: 50%;
-            transform: translate(-50%, -120%);
+            transform: translate(-50%, calc(-100% - 10px));
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.277);
             opacity: 0;
             visibility: hidden;
@@ -76,6 +76,10 @@
         #st, #est{
             display: inline-flex;
             padding-inline: 6px;
+        }
+        .tablescroll{
+            overflow: auto;
+            max-height: 300px;
         }
         .dflx{
             display: flex;
@@ -272,16 +276,18 @@
                 <button class="btn btn-danger disabled" id="attack">Attack</button>
                 <div class="position-relative">
                     <div class="inventory text-center" id="inventory">
-                        <table class="table table-bordered">
-                            <thead class="table-success">
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Effect</th>
-                                    <th>Uses</th>
-                                </tr>
-                            </thead>
-                            <tbody id="itemSlot"></tbody>
-                        </table>
+                        <div class="tablescroll mb-2">
+                            <table class="table table-bordered position-relative">
+                                <thead class="table-success position-sticky top-0">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Effect</th>
+                                        <th>Uses</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemSlot"></tbody>
+                            </table>
+                        </div>
                         <button class="btn btn-danger btn-sm mx-auto" id="closeInv">Close</button>
                     </div>
                     <button class="btn btn-success disabled" id="showInv">Item</button>

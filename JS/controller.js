@@ -43,6 +43,8 @@ var score   = 0;
 var round = 0;
 var eStatIncrease = 0
 var enemy, player, equipment, itemType;
+
+window.itempool = itemPool;
 //================ HTML ELEMENTS ===========================//
 
 //================ GAME FUNCTIONS ===========================//
