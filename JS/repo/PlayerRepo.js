@@ -32,7 +32,6 @@ export function useItem(player, itemId){
             var healLog = `
                 <div><b>You</b> used ${item.name}, heal <b id="heal">${heal}hp</b>.</div><hr>`;    
             log(healLog);
-            if(player.skillCd != 0) player.skillCd--;
             updateHealthBar(player);
         }
         else if(item.type == 'enchant')
