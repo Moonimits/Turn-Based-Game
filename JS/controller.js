@@ -65,8 +65,8 @@ export function generateEnemy(){
                     if(typeof enemy.skillSet[skillName] === "number"){
                         if(["heal","regeneration"].includes(skillName)){
                             enemy.skillSet[skillName] += Math.round(enemy.maxhealth * 0.05)
-                        }else if(["healtSteal","bloodBreak"].includes(skillName)){
-                            enemy.skillSet[skillName] += 2;
+                        }else if(["healthSteal","bloodBreak"].includes(skillName)){
+                            enemy.skillSet[skillName] += 5;
                         }else if(["critical"].includes(skillName)){
                             enemy.skillSet[skillName] += 0.2;
                         }else{

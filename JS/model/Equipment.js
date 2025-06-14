@@ -139,7 +139,7 @@ export function procItemEffect(player, enemy){
                 }
             }else if(effectName == "Damagegain"){
                 if(enemy.curhealth <= 0){
-                    player.damage += Math.round(player.damage * (weaponEffect.percent/100));
+                    player.damage += Math.round((player.damage - player.equipWeapon.damage) * (weaponEffect.percent/100));
                     updatePlayerDmgLabel(player)
                 }
             }else if(effectName == "Heal"){
@@ -254,6 +254,8 @@ export const itemPool = {
     ],
     consumable:[
         ...consumables,
+    ],
+    enchantment:[
         ...enchantments
     ]
 }

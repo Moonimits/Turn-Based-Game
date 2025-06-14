@@ -53,7 +53,7 @@ export const specialEnemy = [
         name: "A'Rzor",           
         health: 380,  
         damage: 30,  
-        skill: {lacerate: 100, bloodBreak: 40},    
+        skill: {lacerate: 100, bloodBreak: 30},    
         category: 'elite',
         exp: 30
     },
@@ -69,7 +69,7 @@ export const specialEnemy = [
         name: "BioVoid",           
         health: 160,  
         damage: 10,  
-        skill: {healthSteal: 15},    
+        skill: {healthSteal: 10},    
         category: 'elite',
         exp: 30
     },

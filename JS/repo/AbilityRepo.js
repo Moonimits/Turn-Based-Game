@@ -113,12 +113,12 @@ export function lacerate(enemy, player){{
 }}
 
 export function bloodBreak(enemy, player){{
-    const breakDmg = Math.floor(player.maxhealth * (enemy.skillSet.bloodBreak/100))
+    const breakDmg = Math.floor((player.maxhealth * 0.1)+(player.curhealth * (enemy.skillSet.bloodBreak/100)))
     player.curhealth -= breakDmg
     inflictStatus(player, objStatus("bleed", 20, 5))
     updateHealthBar(player)
     var skillLog =`
-        <div><b id="elog">${enemy.name}</b> used Blood Break, dealt <b>${breakDmg}dmg</b> (${enemy.skillSet.bloodBreak}% MaxHP).</div><hr>`;
+        <div><b id="elog">${enemy.name}</b> used Blood Break, dealt <b>${breakDmg}dmg</b> (10% MaxHP + ${enemy.skillSet.bloodBreak}% CurHP).</div><hr>`;
     log(skillLog)
 }}
 
@@ -166,13 +166,18 @@ export function curse(enemy, player){{
 
 export function disarm(enemy, player){
     const disarm = {name: "", damage: 0}
-    const disarmDmg = 10;
-    player.curhealth -= disarmDmg
-    updateHealthBar(player);
-    equip(player, "weapon", disarm);
-    delete player.equipWeapon;
-    var skillLog = `
-        <div><b id="elog">${enemy.name}</b> disarmed your weapon. dealt <b>${disarmDmg}dmg</b>.</div><hr>`;
+    const disarmDmg = enemy.damage;
+    if(probability(50)){
+        player.curhealth -= disarmDmg
+        updateHealthBar(player);
+        equip(player, "weapon", disarm);
+        delete player.equipWeapon;
+        var skillLog = `
+            <div><b id="elog">${enemy.name}</b> disarmed your weapon. dealt <b>${disarmDmg}dmg</b>.</div><hr>`;
+    }else{
+        var skillLog = `
+            <div><b id="elog">${enemy.name}</b> tried to disarm your weapon. dealt <b>${disarmDmg}dmg</b>.</div><hr>`;
+    }
     log(skillLog);
 }
 
