@@ -80,37 +80,74 @@ export const consumables = [
 export const enchantments = [
     {id: 4, name: "Flames Enchant", effect: "Flames", amount:5 , type: "enchant", qty:1},
     {id: 5, name: "Poison Enchant", effect: "Poison", amount:5 , type: "enchant", qty:1},
-    {id: 6, name: "LifeSteal Enchant", effect: "Lifesteal", amount:2 , type: "enchant", qty:1},
-    {id: 7, name: "Bleed Enchant", effect: "Bleed", amount:3 , type: "enchant", qty:1},
-    {id: 8, name: "Healing Enchant", effect: "Heal", amount:5 , type: "enchant", qty:1},
+    {id: 6, name: "LifeSteal Enchant", effect: "Lifesteal", amount:3 , type: "enchant", qty:1},
+    {id: 7, name: "Bleed Enchant", effect: "Bleed", amount: 4 , type: "enchant", qty:1},
+    {id: 8, name: "Healing Enchant", effect: "Heal", amount:10 , type: "enchant", qty:1},
     {id: 9, name: "Strength Enchant", effect: "Strength", amount:5 , type: "enchant", qty:1},
-    {id: 10, name: "Lifebreak Enchant", effect: "Lifebreak", amount:1 , type: "enchant", qty:1},
+    {id: 10, name: "Lifebreak Enchant", effect: "Lifebreak", amount:2 , type: "enchant", qty:1},
+]
+export const enchantmentsII = [
+    {id: 11, name: "Flames Enchant II", effect: "Flames", amount:10 , type: "enchant", qty:1},
+    {id: 12, name: "Poison Enchant II", effect: "Poison", amount:10 , type: "enchant", qty:1},
+    {id: 13, name: "LifeSteal Enchant II", effect: "Lifesteal", amount:5 , type: "enchant", qty:1},
+    {id: 14, name: "Bleed Enchant II", effect: "Bleed", amount: 8 , type: "enchant", qty:1},
+    {id: 15, name: "Healing Enchant II", effect: "Heal", amount:15 , type: "enchant", qty:1},
+    {id: 16, name: "Strength Enchant II", effect: "Strength", amount:10 , type: "enchant", qty:1},
+    {id: 17, name: "Lifebreak Enchant II", effect: "Lifebreak", amount:4 , type: "enchant", qty:1},
+]
+export const enchantmentsIII = [
+    {id: 18, name: "Flames Enchant III", effect: "Flames", amount:15 , type: "enchant", qty:1},
+    {id: 19, name: "Poison Enchant III", effect: "Poison", amount:15 , type: "enchant", qty:1},
+    {id: 20, name: "LifeSteal Enchant III", effect: "Lifesteal", amount:8 , type: "enchant", qty:1},
+    {id: 21, name: "Bleed Enchant III", effect: "Bleed", amount: 12 , type: "enchant", qty:1},
+    {id: 22, name: "Healing Enchant III", effect: "Heal", amount:20 , type: "enchant", qty:1},
+    {id: 23, name: "Strength Enchant III", effect: "Strength", amount:15 , type: "enchant", qty:1},
+    {id: 24, name: "Lifebreak Enchant III", effect: "Lifebreak", amount:6 , type: "enchant", qty:1},
 ]
 
 //Enchant Items
 export function enchant(player, enchantment){
     const weaponEffects = player.equipWeapon.effect
-    
+    var chance = 35
+    var duration = 3;
+    var level = 1
+
+    if(enchantment.name.includes("III")){
+        chance = 45
+        duration = 5
+        level = 3
+    }else if(enchantment.name.includes("II")){
+        duration = 4;
+        level = 2
+    }
+
     if(weaponEffects){
-        const weaponEffect =  weaponEffects.find( effect => effect.name == enchantment.effect)
+        const weaponEffect = weaponEffects.find( effect => effect.name == enchantment.effect)
 
         if(weaponEffect){
             if(["inflict","buff"].includes(weaponEffect.type)){
                 const key = Object.keys(weaponEffect.status)[0]
                 weaponEffect.status[key] += enchantment.amount;
+                if(level == 3){
+                    weaponEffect.status.duration += 2;
+                    weaponEffect.chance += 5;
+                }else if(level == 2){
+                    weaponEffect.status.duration += 1;
+                }
             }else if(["onhit"].includes(weaponEffect.type)){
                 if(weaponEffect.mode == "flat"){
-                    weaponEffect.amount += enchantment.amount
+                    weaponEffect.amount += enchantment.amount;
+                    if(level == 3) weaponEffect.chance += 5;
                 }else if(weaponEffect.mode == "percentage"){
-                    weaponEffect.percent += enchantment.amount
+                    weaponEffect.percent += enchantment.amount;
                 }
             }
         }else{
-            player.equipWeapon.effect.push(objEffect(enchantment.effect, enchantment.amount))
+            player.equipWeapon.effect.push(objEffect(enchantment.effect, enchantment.amount, chance, duration))
         }
         
     }else{
-        player.equipWeapon.effect = [objEffect(enchantment.effect, enchantment.amount)];
+        player.equipWeapon.effect = [objEffect(enchantment.effect, enchantment.amount, chance, duration)];
     }
 }
 
@@ -169,7 +206,8 @@ function objEffect(effectName, val, chance = 35, inflictDuration = 3){
             name: "Heal", 
             type: "onhit", 
             mode: "flat", 
-            amount: val, chance: chance,
+            amount: val, 
+            chance: chance,
             desc: `${chance}% chance to heal <b class='hp'>${val}hp<b>`,
         },
         {
@@ -256,6 +294,11 @@ export const itemPool = {
         ...consumables,
     ],
     enchantment:[
-        ...enchantments
+        ...enchantments,
+        ...enchantments,
+        ...enchantments,
+        ...enchantmentsII,
+        ...enchantmentsII,
+        ...enchantmentsIII
     ]
 }
