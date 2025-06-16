@@ -7,6 +7,7 @@ import { probability } from "./repo/AbilityRepo.js";
 //================ HTML ELEMENTS ===========================//
 const classSummary = document.getElementById("classSummary");
 const tableSummary = document.getElementById("tableSummary");
+const playerSummary = document.getElementById("playerSummary");
 const selectBox = document.getElementById("selectBox");
 const battleLog = document.getElementById('battleLog');
 const inventory = document.getElementById('inventory');
@@ -235,11 +236,10 @@ start.addEventListener('click', ()=>{
     const playerName    = playerNameInput.value;
     const playerClass   = playerClassInput.value;
     
-    if(playerName == ''){
+    if(playerName.trim() == ''){
         playerNameInput.focus()
         return false;
     }
-
     
     const Class  = heroClass[playerClass];
     player = new Player(playerName, Class.health, Class.damage, Class.class, Class.skill);
@@ -358,6 +358,14 @@ battleLog.addEventListener('click', function(e){
     }else if (e.target.id === 'ignore'){
         equipButton.remove();
         randomEvent();
+    }
+})
+
+//playerSummary
+name.addEventListener('click', () => playerSummary.classList.add("show"))
+playerSummary.addEventListener("click", function(e){
+    if(e.target.id == "closeSummary"){
+        this.classList.remove("show")
     }
 })
 //================ GAME FUNCTIONS ===========================//

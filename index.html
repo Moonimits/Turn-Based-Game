@@ -175,6 +175,25 @@
             cursor:not-allowed !important;
             /* pointer-events: auto !important; */
         }
+        .playerSummary{
+            position: fixed;
+            width: 400px;
+            top: 0;
+            bottom: 0;
+            border: 4px solid blue;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.352);
+            padding: 10px;
+            background-color: white;
+            transform: translateX(-100%);
+            transition: all 0.5s;
+            z-index: 3;
+        }
+        .playerSummary.show{
+            transform: translateX(0);
+        }
+        .playerSummary table{
+            font-size: 12px;
+        }
         #exp{
             position: absolute;
             top: 50%;
@@ -208,6 +227,9 @@
             }
             #inventory{
                 width: 390px;
+            }
+            .playerSummary{
+                width: 100%;
             }
         }
     </style>
@@ -303,6 +325,38 @@
             <h6 id="scoreBoard"></h6>
             <button onclick="location.reload()" id="retry" class="btn btn-danger d-none">Retry</button>
         </div>
+    </div>
+    <div class="playerSummary" id="playerSummary">
+        <div class="d-flex">
+            <div class="fw-bolder">Player Summary</div>
+            <button class="btn-close ms-auto" id="closeSummary"></button>
+        </div>
+        <hr class="my-2">
+        <table class="table table-bordered table-sm" style="table-layout: fixed;">
+            <thead>
+                <tr>
+                    <th colspan="3">Class Name</th>
+                </tr>
+                <tr>
+                    <th colspan="3"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Name:</td>
+                    <td colspan="2">Player</td>
+                </tr>
+                <tr>
+                    <td>Health:</td>
+                    <td colspan="2">100/100</td>
+                </tr>
+                <tr>
+                    <td>Damage:</td>
+                    <td colspan="2">30dmg</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="my-2">
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="JS/controller.js"></script>
