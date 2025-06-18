@@ -176,7 +176,7 @@ export function procItemEffect(player, enemy){
                 }
             }else if(effectName == "Damagegain"){
                 if(enemy.curhealth <= 0){
-                    player.damage += Math.round((player.damage - player.equipWeapon.damage) * (weaponEffect.percent/100));
+                    player.damage += Math.round(enemy.damage * (weaponEffect.percent/100));
                     updatePlayerDmgLabel(player)
                 }
             }else if(effectName == "Heal"){
@@ -236,7 +236,7 @@ function objEffect(effectName, val, chance = 35, inflictDuration = 3){
             type:"onkill", 
             mode: "percentage", 
             percent: val,
-            desc: `DamageGain: Permanently gain ${val}%Dmg on kill`,
+            desc: `DamageGain: Permanently gain enemy's ${val}%Dmg on kill`,
         },
         {
             name: "Flames", 
