@@ -326,58 +326,20 @@
             <button onclick="location.reload()" id="retry" class="btn btn-danger d-none">Retry</button>
         </div>
     </div>
-    <div class="playerSummary show" id="playerSummary">
+    <div class="playerSummary" id="playerSummary">
         <div class="d-flex">
             <div class="fw-bolder">Player Summary</div>
             <button class="btn-close ms-auto" id="closeSummary"></button>
         </div>
         <hr class="my-2">
-        <table class="table table-bordered table-sm" style="table-layout: fixed;">
-            <thead>
-                <tr>
-                    <th colspan="3">Class Name</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Name:</td>
-                    <td colspan="2">Player</td>
-                </tr>
-                <tr>
-                    <td>Health:</td>
-                    <td colspan="2">100/100</td>
-                </tr>
-                <tr>
-                    <td>Damage:</td>
-                    <td colspan="2">30dmg</td>
-                </tr>
-            </tbody>
-        </table>
+        <table id="playerTable" class="table table-bordered table-sm" style="table-layout: fixed;"></table>
         <hr class="my-2">
-        <table class="table table-bordered table-sm" style="table-layout: fixed;">
-            <thead>
-                <tr>
-                    <th colspan="3">Statuses</th>
-                </tr>
-                <tr>
-                    <th>Label</th>
-                    <th>Effect</th>
-                    <th>Duration</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><span class="status PSN">PSN</span></td>
-                    <td>10dmg</td>
-                    <td>4 turns</td>
-                </tr>
-            </tbody>
-        </table>
+        <table id="statusTable" class="table table-bordered table-sm" style="table-layout: fixed;"></table>
         <hr class="my-2">
-        <table class="table table-bordered table-sm" style="table-layout: fixed;">
+        <table id="equipWeaponTable" class="table table-bordered table-sm" style="table-layout: fixed;">
             <thead>
                 <tr>
-                    <th colspan="3">Weapon Name</th>
+                    <th colspan="3">Equiped Weapon</th>
                 </tr>
             </thead>
             <tbody>

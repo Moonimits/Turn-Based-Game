@@ -362,7 +362,40 @@ battleLog.addEventListener('click', function(e){
 })
 
 //playerSummary
-name.addEventListener('click', () => playerSummary.classList.add("show"))
+name.addEventListener('click', function(){
+    playerSummary.classList.add("show");
+    const playerTable = playerSummary.children[2];
+    const statusTable = playerSummary.children[4];
+    const equipWeaponTable = playerSummary.children[6];
+    var tableContent;
+
+    //player table content
+    tableContent = `
+        <thead>
+            <tr><th colspan="3">Class Name</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Name:</td><td colspan="2">${player.name}</td></tr>
+            <tr><td>Health:</td><td colspan="2">${player.curhealth}/${player.maxhealth}</td></tr>
+            <tr><td>Damage:</td><td colspan="2">${player.damage}dmg</td></tr>
+        </tbody>`;
+    playerTable.innerHTML = tableContent;
+    
+    //player status table content
+    tableContent = `
+        <thead>
+            <tr><th colspan="3">Statuses</th></tr>
+        </thead>`;
+    tableContent += `<tbody>${
+        player.status.length <= 0 ? `<tr><td colspan='2'>No statuses</td></tr>` :
+        player.status.map(stat => {
+            const name = Object.keys(stat)[0]
+            return `<tr><td>${name}</td><td>${stat[name]}dmg</td><td>${stat.duration} turns</td></tr>`
+        })
+    }</tbody>`;
+    statusTable.innerHTML = tableContent;
+    
+})
 playerSummary.addEventListener("click", function(e){
     if(e.target.id == "closeSummary"){
         this.classList.remove("show")
