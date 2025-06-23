@@ -208,70 +208,79 @@ function objEffect(effectName, val, chance = 35, inflictDuration = 3){
             mode: "flat", 
             amount: val, 
             chance: chance,
-            desc: `${chance}% chance to heal <b class='hp'>${val}hp<b>`,
+            get desc(){ return `Heal: ${this.chance}% chance to heal <b class='hp'>${this.amount}hp</b>`},
         },
         {
             name: "Lifesteal", 
             type:"onhit", 
             mode: "percentage", 
             percent: val,
-            desc: `${val}% Lifesteal`,
+            get desc(){ return `Lifesteal: ${this.percent}%`},
         },
         {
             name: "Lifebreak", 
             type:"onhit", 
             mode: "percentage", 
             percent: val,
-            desc: `Lifebreak: Deals ${val}%hp damage`,
+            get desc(){ return `Lifebreak: Deals ${this.percent}%hp damage`},
         },
         {
             name: "Healthsteal", 
             type:"onkill", 
             mode: "percentage", 
             percent: val,
-            desc: `Healtsteal: Permanently gain enemy's ${val}% MaxHp on kill`,
+            get desc(){ return `Healtsteal: Permanently gain enemy's ${this.percent}% MaxHp on kill`},
         },
         {
             name: "Damagegain", 
             type:"onkill", 
             mode: "percentage", 
             percent: val,
-            desc: `DamageGain: Permanently gain enemy's ${val}%Dmg on kill`,
+            get desc(){ return `DamageGain: Permanently gain enemy's ${this.percent}%Dmg on kill`},
         },
         {
             name: "Flames", 
             type:"inflict", 
             chance: chance, 
             status: objStatus("burn", val, inflictDuration),
-            desc: `Flames: ${chance}% chance to inflict ${val} burn dmg for ${inflictDuration} rounds`,
+            get desc(){ return `Flames: ${this.chance}% chance to inflict ${this.status.burn} burn dmg for ${this.status.duration} rounds`},
         },
         {
             name: "Poison", 
             type: "inflict", 
             chance: chance, 
             status: objStatus("poison", val, inflictDuration),
-            desc: `Poison: ${chance}% chance to inflict ${val} poison dmg for ${inflictDuration} rounds`,
+            get desc(){ return `Poison: ${this.chance}% chance to inflict ${this.status.poison} poison dmg for ${this.status.duration} rounds`},
         },
         {
             name: "Bleed", 
             type: "inflict", 
             chance: chance, 
             status: objStatus("bleed", val, inflictDuration),
-            desc: `Bleed: ${chance}% chance to inflict ${val} bleed dmg for ${inflictDuration} rounds`,
+            get desc(){ return `Bleed: ${this.chance}% chance to inflict ${this.status.bleed} bleed dmg for ${this.status.duration} rounds`},
         },
         {
             name: "Strength", 
             type: "buff", 
             chance: chance, 
             status: objStatus("strength", val, inflictDuration),
-            desc: `Strength: ${chance}% chance to gain ${val} bonus dmg for ${inflictDuration} rounds`,
+            get desc(){ return `Strength: ${this.chance}% chance to gain ${this.status.strength} bonus dmg for ${this.status.duration} rounds`},
         },
     ];
 
     const name = effectName;
     const effect = weaponEffects.find( eff => eff.name.toLocaleLowerCase() == name.toLowerCase());
+
+    const clone = Object.create(
+        Object.getPrototypeOf(effect),
+        Object.getOwnPropertyDescriptors(effect)
+    );
+
+    if (clone.status) {
+        clone.status = structuredClone(effect.status); // status is data-only, safe to clone
+    }
     
-    return {...effect};
+    return clone;
 }
 
 export const itemPool = {

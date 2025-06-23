@@ -394,6 +394,27 @@ name.addEventListener('click', function(){
         })
     }</tbody>`;
     statusTable.innerHTML = tableContent;
+
+    tableContent = `
+        <thead>
+            <tr><th colspan="3">Equiped Weapon</th></tr>
+        </thead>`;
+    if(player.equipWeapon){
+        tableContent += `
+            <tbody>
+                <tr><td>Name:</td><td colspan="2">${player.equipWeapon.name}</td></tr>
+                <tr><td>Stats:</td><td colspan="2">${player.equipWeapon.damage}dmg</td></tr>
+                <tr><td>Effects:</td><td colspan="2">${
+                    !player.equipWeapon.effect ? `No Effects` : 
+                    player.equipWeapon.effect.map(eff => {
+                        return `${eff.desc}` 
+                    }).join(`<br>`)
+                }</td></tr>
+            </tbody>`;
+    }else{
+        tableContent += `<tbody><tr><td colspan='3'>Nothing Equiped</td></tr></tbody>`
+    }
+    equipWeaponTable.innerHTML = tableContent;
     
 })
 playerSummary.addEventListener("click", function(e){
