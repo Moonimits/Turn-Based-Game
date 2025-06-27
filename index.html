@@ -5,234 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        #elog,.negStat,.dmg{
-            color: red;
-        }
-        #heal,.posStat,.hp{
-            color: green;
-        }
-        #battleLog{
-            padding: 8px;
-            width: 100%;
-            border: 2px solid red;
-            height: 500px;
-            overflow-y: auto;
-        }
-        #inventory{
-            position: absolute;
-            width: 420px;
-            border: 2px solid green;
-            background-color: white;
-            border-radius: 5px;
-            padding: 5px;
-            top: 0;
-            left: 50%;
-            transform: translate(-50%, calc(-100% - 10px));
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.277);
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: all 0.4s;
-        }
-        #inventory.show{
-            opacity: 1;
-            visibility: visible;
-            pointer-events: all;
-        }
-        #inventory::before{
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 10px solid;
-            border-color: green transparent transparent transparent;
-        }
-        #inventory::after{
-            content: "Inventory";
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 2px solid green;
-            padding: 2px 8px;
-            border-radius: 4px;
-            text-align: center;
-            background-color: white;
-            font-size: 12px;
-        }
-        #roundCounter{
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 2px 8px;
-            border: 2px solid red;
-            border-radius: 10px;
-            z-index: 1;
-        }
-        #st, #est{
-            display: inline-flex;
-            padding-inline: 6px;
-        }
-        .tablescroll{
-            overflow: auto;
-            max-height: 300px;
-        }
-        .dflx{
-            display: flex;
-            align-items: center;
-        }
-        .dflxend{
-            display: flex;
-            justify-content: end;
-            align-items: center;
-        }
-        .status{
-            font-size: 8px;
-            font-weight: bold;
-            border-radius: 50px;
-            border: 2px solid black;
-            padding: 2px 7px;
-        }
-        .status.PSN{
-            background-color: blueviolet;
-        }
-        .status.BRN{
-            background-color: orange;
-        }
-        .status.RGN{
-            background-color: limegreen;
-        }
-        .status.BLD{
-            background-color: red;
-        }
-        .status.ATK\+{
-            background-color: crimson;
-        }
-        .status.ATK-{
-            background-color: gray;
-        }
-        .controls{
-            display: flex;
-            gap: 4px;
-            width: fit-content;
-            margin-top: 8px;    
-            margin-inline: auto;
-        }
-        .gamelog, .gameover{
-            display: none;
-        }
-        .playerSet, .classSummary{
-            margin-inline: auto ;
-            padding: 8px;
-            border-radius: 10px;
-            background-color: whitesmoke;
-            box-shadow: 0px 3px 10px hsla(0, 0%, 0%, 0.482);
-            opacity: 1;
-            transition: all 1s;
-        }
-        .selectBox{
-            margin-top: 10px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        .classSummary.hide{
-            transform: translateY(25px);
-            opacity: 0;
-        }
-        .selectClass{
-            border: 1px solid rgba(65, 65, 65, 0.304);
-            padding: 5px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: 900;
-            text-transform: uppercase;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.277);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        .selectClass.selected{
-            color:  steelblue;
-            outline: 2px solid steelblue;
-            box-shadow: 0px 0px 10px rgb(45, 100, 252);
-        }
-        .special{
-            animation: special 15s infinite;
-        }
-        .elite{
-            font-weight: bold;
-            text-shadow: 1px 1px 0 red;
-        }
-        .hack{
-            animation: hacked 0.6s infinite;
-        }
-        .disabled{
-            cursor:not-allowed !important;
-            /* pointer-events: auto !important; */
-        }
-        .playerSummary{
-            position: fixed;
-            width: 400px;
-            top: 0;
-            bottom: 0;
-            border: 4px solid blue;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.352);
-            padding: 10px;
-            background-color: white;
-            transform: translateX(-100%);
-            transition: all 0.5s;
-            z-index: 3;
-        }
-        .playerSummary.show{
-            transform: translateX(0);
-        }
-        .playerSummary table{
-            font-size: 12px;
-        }
-        #exp{
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        @keyframes hacked {
-            0%   {text-shadow: 1px 1px 0 green;}
-            25%  {text-shadow: 1px -1px 0 green;}
-            50%  {text-shadow: -1px -1px 0 green;}
-            75%  {text-shadow: -1px 1px 0 green;}
-            100% {text-shadow: 1px 1px 0 green;}
-        }
-        @keyframes special {
-            0%   {text-shadow: 0 0 2px red}
-            10%  {text-shadow: 2px 0 0 red}
-            20%  {text-shadow: 0 0 2px red}
-            30%  {text-shadow: -2px 0 0 red}
-            40%  {text-shadow: 0 0 2px red}
-            50%  {text-shadow: 0 0 10px blue}
-            60%  {text-shadow: 0 0 2px red}
-            70%  {text-shadow: 2px 0 0 red}
-            80%  {text-shadow: 0 0 2px red}
-            90%  {text-shadow: -2px 0 0 red}
-            100% {text-shadow: 0 0 2px red}
-        }
-
-        @media (max-width: 420px) {
-            #tableSummary{
-                font-size: 10px !important;
-            }
-            #inventory{
-                width: 390px;
-            }
-            .playerSummary{
-                width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
     <title>Through the Unfortunate</title>
 </head>
 <body>
@@ -336,10 +109,12 @@
         <hr class="my-2">
         <table id="statusTable" class="table table-bordered table-sm" style="table-layout: fixed;"></table>
         <hr class="my-2">
-        <table id="equipWeaponTable" class="table table-bordered table-sm" style="table-layout: fixed;">
+        <table id="equipWeaponTable" class="table table-bordered table-sm" style="table-layout: fixed;"></table>
+        <hr class="my-2">
+        <table id="equipArmorTable" class="table table-bordered table-sm" style="table-layout: fixed;">
             <thead>
                 <tr>
-                    <th colspan="3">Equiped Weapon</th>
+                    <th colspan="3">Equiped Armor</th>
                 </tr>
             </thead>
             <tbody>
@@ -359,6 +134,7 @@
         </table>
         <hr class="my-2">
     </div>
+    <div id="statusLabel">10dmg (4turns)</div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="JS/controller.js"></script>
 </body>

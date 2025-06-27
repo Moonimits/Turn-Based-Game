@@ -116,12 +116,12 @@ export function triggerStatus(target){
 
 export function objStatus(name, amount, duration, perc = false){
     const statusArray = [
-        {strength: amount, duration: duration, lbl:"ATK+", applied: false, percent: perc},
-        {weaken: amount, duration: duration, lbl:"ATK-", applied: false, percent: perc},
-        {burn: amount, duration: duration, lbl:"BRN"},
-        {poison: amount, duration: duration, lbl:"PSN"},
-        {regen: amount, duration: duration, lbl:"RGN"},
-        {bleed: amount, duration: duration, lbl:"BLD"},
+        {strength: amount, id:1, duration: duration, lbl:"ATK+", applied: false, percent: perc},
+        {weaken: amount,   id:2, duration: duration, lbl:"ATK-", applied: false, percent: perc},
+        {burn: amount,     id:3, duration: duration, lbl:"BRN"},
+        {poison: amount,   id:4, duration: duration, lbl:"PSN"},
+        {regen: amount,    id:5, duration: duration, lbl:"RGN"},
+        {bleed: amount,    id:6, duration: duration, lbl:"BLD"},
     ]
 
     const statusName = name

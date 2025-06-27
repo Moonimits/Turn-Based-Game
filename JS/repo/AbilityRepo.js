@@ -125,6 +125,10 @@ export function bloodBreak(enemy, player){{
 export function healthSteal(enemy, player){{
     const healthSteal = 10 + Math.floor(player.maxhealth * (enemy.skillSet.healthSteal/100))
     player.maxhealth -= healthSteal
+    if(player.equipArmor){
+        player.equipArmor.health -= healthSteal
+        if(player.equipArmor.health < 0) player.equipArmor.health = 0;
+    } 
     enemy.maxhealth += healthSteal
     enemy.curhealth += healthSteal + (Math.floor((enemy.maxhealth - enemy.curhealth)*0.10));
     if(probability(50)) inflictStatus(enemy, objStatus("regen", 20, 5))

@@ -5,6 +5,7 @@ import { randomBehavior } from "./repo/EntityRepo.js";
 import { itemPool, weapons, armors } from "./model/Equipment.js";
 import { probability } from "./repo/AbilityRepo.js";
 //================ HTML ELEMENTS ===========================//
+const statusLabel = document.getElementById("statusLabel")
 const classSummary = document.getElementById("classSummary");
 const tableSummary = document.getElementById("tableSummary");
 const playerSummary = document.getElementById("playerSummary");
@@ -367,6 +368,7 @@ name.addEventListener('click', function(){
     const playerTable = playerSummary.children[2];
     const statusTable = playerSummary.children[4];
     const equipWeaponTable = playerSummary.children[6];
+    const equipArmorTable = playerSummary.children[8];
     var tableContent;
 
     //player table content
@@ -415,6 +417,28 @@ name.addEventListener('click', function(){
         tableContent += `<tbody><tr><td colspan='3'>Nothing Equiped</td></tr></tbody>`
     }
     equipWeaponTable.innerHTML = tableContent;
+
+
+    tableContent = `
+        <thead>
+            <tr><th colspan="3">Equiped Armor</th></tr>
+        </thead>`;
+    if(player.equipArmor){
+        tableContent += `
+            <tbody>
+                <tr><td>Name:</td><td colspan="2">${player.equipArmor.name}</td></tr>
+                <tr><td>Stats:</td><td colspan="2">${player.equipArmor.health}hp</td></tr>
+                <tr><td>Effects:</td><td colspan="2">${
+                    !player.equipArmor.effect ? `No Effects` : 
+                    player.equipArmor.effect.map(eff => {
+                        return `${eff.desc}` 
+                    }).join(`<br>`)
+                }</td></tr>
+            </tbody>`;
+    }else{
+        tableContent += `<tbody><tr><td colspan='3'>Nothing Equiped</td></tr></tbody>`
+    }
+    equipArmorTable.innerHTML = tableContent;
     
 })
 playerSummary.addEventListener("click", function(e){
@@ -466,7 +490,8 @@ export function updatePlayerStatusLabel(player){
     const statuses = player.status
     var statusIcons = ''
     statuses.forEach(status => {
-        statusIcons += `<div class="status ${status.lbl}">${status.lbl}</div>`
+        console.log(status.id)
+        statusIcons += `<div data-id="${status.id}" class="status ${status.lbl}">${status.lbl}</div>`
     });
     st.innerHTML = statusIcons
 }
@@ -474,7 +499,7 @@ export function updateEnemyStatusLabel(enemy){
     const statuses = enemy.status
     var statusIcons = ''
     statuses.forEach(status => {
-        statusIcons += `<div class="status ${status.lbl}">${status.lbl}</div>`
+        statusIcons += `<div data-id="${status.id}" class="status ${status.lbl}">${status.lbl}</div>`
     });
     est.innerHTML = statusIcons
 }
@@ -559,6 +584,45 @@ function roundUpdate(){
     if(round % 25 == 0) eStatIncrease++;
 }
 
+//Status tooltip
+document.addEventListener("click", function(e){
+    const target = e.target;
+    const entity = target.parentElement.id == "st" ? player : enemy;
+    if(target.classList.contains("status")){
+        const statusId = target.dataset.id;
+        const detailRect = statusLabel.getBoundingClientRect();
+        const tRect = target.getBoundingClientRect();
+        const x = tRect.left - (detailRect.width/2) + (tRect.width/2);
+        const y = tRect.top - detailRect.height - 4;
+        const status = entity.status.find( stat => stat.id == statusId);
+        console.log(statusId)
+        console.log(status)
+        const statusVal = Object.values(status)[0];  
+        var details;
 
+        switch (status.lbl) {
+            case "RGN":
+                details = `${statusVal}hp (${status.duration} turns)`
+                break;
+
+            case "ATK+":
+                details = status.percent ? `+(${statusVal}%)dmg (${status.duration+1} turns)` : `+${statusVal}dmg (${status.duration+1} turns)`;
+                break;
+
+            case "ATK-":
+                details = status.percent ? `-(${statusVal}%)dmg (${status.duration+1} turns)` : `-${statusVal}dmg (${status.duration+1} turns)`;
+                break;
+        
+            default:
+                details = `${statusVal}dmg (${status.duration} turns)`
+                break;
+        }
+        statusLabel.innerHTML = details;
+        statusLabel.classList.add("show")
+        statusLabel.style.transform = `translate(${x}px, ${y}px)`;
+    }else{
+        statusLabel.classList.remove("show")
+    }
+})
 
 //================ UTILITY ===========================//
