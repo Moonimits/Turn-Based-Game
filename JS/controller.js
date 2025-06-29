@@ -56,7 +56,7 @@ export function generateEnemy(){
 
         const randomizer   = Math.floor(Math.random() * enemyPool.length);
         const entity       = enemyPool[randomizer];
-        enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp);
+        enemy = new Enemy(entity.name, entity.health, entity.damage, entity.skill, entity.category, entity.exp, entity.gold);
     
         for(var i = 1; i <= eStatIncrease; i++){
             if(["basic", "elite"].includes(enemy.category)){
@@ -150,7 +150,7 @@ export function generateItem(){
             ${effectLabel}
             <div id='equipButton'>
                 <span class='btn btn-sm btn-success' id='equip'>Equip</span> 
-                <span class='btn btn-sm btn-danger' id='ignore'>Ignore</span>
+                <span class='btn btn-sm btn-primary' id='ignore'>Sell (<b class='gold'>${equipment.gold}g</b>)</span>
             </div>
             <hr>`;
     }else{
@@ -357,6 +357,7 @@ battleLog.addEventListener('click', function(e){
         useItem(player,itemId);
         randomEvent();
     }else if (e.target.id === 'ignore'){
+        player.gold += equipment.gold;
         equipButton.remove();
         randomEvent();
     }
@@ -374,12 +375,13 @@ name.addEventListener('click', function(){
     //player table content
     tableContent = `
         <thead>
-            <tr><th colspan="3">Class Name</th></tr>
+            <tr><th colspan="3">Class: ${player.heroClass} (Lv.${player.level})</th></tr>
         </thead>
         <tbody>
             <tr><td>Name:</td><td colspan="2">${player.name}</td></tr>
             <tr><td>Health:</td><td colspan="2">${player.curhealth}/${player.maxhealth}</td></tr>
             <tr><td>Damage:</td><td colspan="2">${player.damage}dmg</td></tr>
+            <tr><td>Gold:</td><td colspan="2">${player.gold}gold</td></tr>
         </tbody>`;
     playerTable.innerHTML = tableContent;
     
@@ -490,7 +492,6 @@ export function updatePlayerStatusLabel(player){
     const statuses = player.status
     var statusIcons = ''
     statuses.forEach(status => {
-        console.log(status.id)
         statusIcons += `<div data-id="${status.id}" class="status ${status.lbl}">${status.lbl}</div>`
     });
     st.innerHTML = statusIcons
@@ -514,6 +515,7 @@ export function handleDefeatEnemy(enemy, player){
         score += 1;    
         log(slainLog);
         est.innerHTML = ''
+        player.gold += enemy.gold
         updateExp(player, enemy.expval).then(()=>randomEvent())
     }, 1000);
 }
@@ -587,16 +589,10 @@ function roundUpdate(){
 //Status tooltip
 document.addEventListener("click", function(e){
     const target = e.target;
-    const entity = target.parentElement.id == "st" ? player : enemy;
     if(target.classList.contains("status")){
+        const entity = target.parentElement.id == "st" ? player : enemy;
         const statusId = target.dataset.id;
-        const detailRect = statusLabel.getBoundingClientRect();
-        const tRect = target.getBoundingClientRect();
-        const x = tRect.left - (detailRect.width/2) + (tRect.width/2);
-        const y = tRect.top - detailRect.height - 4;
         const status = entity.status.find( stat => stat.id == statusId);
-        console.log(statusId)
-        console.log(status)
         const statusVal = Object.values(status)[0];  
         var details;
 
@@ -618,6 +614,11 @@ document.addEventListener("click", function(e){
                 break;
         }
         statusLabel.innerHTML = details;
+
+        const detailRect = statusLabel.getBoundingClientRect();
+        const tRect = target.getBoundingClientRect();
+        const x = tRect.left - (detailRect.width/2) + (tRect.width/2);
+        const y = tRect.top - detailRect.height - 4;
         statusLabel.classList.add("show")
         statusLabel.style.transform = `translate(${x}px, ${y}px)`;
     }else{

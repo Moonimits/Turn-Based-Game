@@ -66,6 +66,7 @@ export class Player{
     
         //player Utility
         this.skillCd = 0;
+        this.gold = 0;
         this.level = 1;
         this.expreq = 100;
         this.exp = 0;

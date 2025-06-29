@@ -60,6 +60,11 @@ export function useSkill(enemy, player){
     })
 }
 
+export function receiveDamage(player, damage){
+    player.curhealth -= damage;
+    updateHealthBar(player);
+}
+
 
 
 export function equip(player, type, equipment){
