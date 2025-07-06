@@ -99,42 +99,92 @@
             <button onclick="location.reload()" id="retry" class="btn btn-danger d-none">Retry</button>
         </div>
     </div>
-    <div class="playerSummary" id="playerSummary">
-        <div class="d-flex">
-            <div class="fw-bolder">Player Summary</div>
-            <button class="btn-close ms-auto" id="closeSummary"></button>
+    <div class="sidebar" id="sidebar">
+        <div class="playerSummary d-none" id="playerSummary">
+            <div class="d-flex">
+                <div class="fw-bolder">Player Summary</div>
+                <button class="btn-close ms-auto" id="closeSummary"></button>
+            </div>
+            <hr class="my-2">
+            <table id="playerTable" class="table table-bordered table-sm" style="table-layout: fixed;"></table>
+            <hr class="my-2">
+            <table id="statusTable" class="table table-bordered table-sm" style="table-layout: fixed;"></table>
+            <hr class="my-2">
+            <table id="equipWeaponTable" class="table table-bordered table-sm" style="table-layout: fixed;"></table>
+            <hr class="my-2">
+            <table id="equipArmorTable" class="table table-bordered table-sm" style="table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <th colspan="3">Equiped Armor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Name:</td>
+                        <td colspan="2">Sword</td>
+                    </tr>
+                    <tr>
+                        <td>Stats:</td>
+                        <td colspan="2">10dmg</td>
+                    </tr>
+                    <tr>
+                        <td>Effects</td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr class="my-2">
         </div>
-        <hr class="my-2">
-        <table id="playerTable" class="table table-bordered table-sm" style="table-layout: fixed;"></table>
-        <hr class="my-2">
-        <table id="statusTable" class="table table-bordered table-sm" style="table-layout: fixed;"></table>
-        <hr class="my-2">
-        <table id="equipWeaponTable" class="table table-bordered table-sm" style="table-layout: fixed;"></table>
-        <hr class="my-2">
-        <table id="equipArmorTable" class="table table-bordered table-sm" style="table-layout: fixed;">
-            <thead>
-                <tr>
-                    <th colspan="3">Equiped Armor</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Name:</td>
-                    <td colspan="2">Sword</td>
-                </tr>
-                <tr>
-                    <td>Stats:</td>
-                    <td colspan="2">10dmg</td>
-                </tr>
-                <tr>
-                    <td>Effects</td>
-                    <td colspan="2"></td>
-                </tr>
-            </tbody>
-        </table>
-        <hr class="my-2">
+        <div class="shop d-none text-center" id="shop">
+            <div class="d-flex justify-content-between">
+                <div class="fw-bolder">Shop</div>
+                <div class="gold fw-bold" id="playerGold">10g</div>
+            </div>
+            <hr class="my-2">
+            <div class="shopscroll">
+                <div class="fw-bold">Healing Potions</div>
+                <table class="table table-bordered table-sm" style="table-layout: fixed;">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Item</th>
+                            <th>Label</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <hr class="my-2">
+                <div class="fw-bold">Enchants</div>
+                <table class="table table-bordered table-sm" style="table-layout: fixed;">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Item</th>
+                            <th>Label</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <hr class="my-2">
+                <div class="fw-bold">Stat Enhancers</div>
+                <table class="table table-bordered table-sm" style="table-layout: fixed;">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Item</th>
+                            <th>Label</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <button id="closeShop" class="btn btn-primary">Exit Shop</button>
+        </div>
     </div>
-    <div id="statusLabel">10dmg (4turns)</div>
+    <div id="statusLabel"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="JS/controller.js"></script>
 </body>

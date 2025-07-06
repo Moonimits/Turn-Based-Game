@@ -2,9 +2,12 @@ import { enemyPool, Enemy, specialEnemy, increaseEnemyPool } from "./model/Entit
 import { heroClass, Player } from "./model/Player.js";
 import { attackEnemy, useItem, equip, useSkill } from "./repo/PlayerRepo.js";
 import { randomBehavior } from "./repo/EntityRepo.js";
-import { itemPool, weapons, armors } from "./model/Equipment.js";
+import { itemPool, weapons, armors, effectDesc } from "./model/Equipment.js";
 import { probability } from "./repo/AbilityRepo.js";
+import { buildShop, loadPurchasable } from "./repo/ShopRepo.js";
 //================ HTML ELEMENTS ===========================//
+const shop = document.getElementById("shop");
+const sidebar = document.getElementById("sidebar");
 const statusLabel = document.getElementById("statusLabel")
 const classSummary = document.getElementById("classSummary");
 const tableSummary = document.getElementById("tableSummary");
@@ -43,8 +46,9 @@ const edmg  = document.getElementById('edmg');
 const est  = document.getElementById('est');
 var score   = 0;
 var round = 0;
-var eStatIncrease = 0
-var enemy, player, equipment, itemType;
+var eStatIncrease = 0;
+var shopAppear = false;
+var enemy, player, equipment, itemType, shopItems;
 
 window.itempool = itemPool;
 //================ HTML ELEMENTS ===========================//
@@ -109,7 +113,7 @@ export function generateEnemy(){
         }else{
             toggleButtons();
         }
-    });    
+    });   
 }
 
 export function generateItem(){
@@ -138,7 +142,7 @@ export function generateItem(){
         var effect = equipment.effect;
         var effectLabel = '';
         if(effect){
-            const effects = effect.map(eff => eff.desc).join("<br>"); 
+            const effects = effect.map(eff => effectDesc(eff)).join("<br>"); 
             effectLabel = `<div><b>Effect:</b> ${effects}</div>`
         }
 
@@ -154,12 +158,19 @@ export function generateItem(){
             </div>
             <hr>`;
     }else{
+        const labelMap = {
+            hp: "MaxHP (Base)",
+            dmg: "dmg (Base)",
+            weapon: "dmg (Weapon)",
+            armor: "hp (Armor)",
+        }
         const statsMap = {
             heal: `${equipment.heal} heal`,
             enchant: `${equipment.effect}: +${equipment.amount}`,
-        } 
+            boost: `+${equipment.amount} ${labelMap[equipment.boost]}`,
+        }
         var stats = statsMap[equipment.type];
-        var disabled = (equipment.type == "enchant" && !player.equipWeapon) ? 'disabled' : '';
+        var disabled = ((equipment.type == "enchant" && !player.equipWeapon) || (["weapon", "armor"].includes(equipment.boost) && !player.equipWeapon)) ? 'disabled' : '';
         itemDetails = `
             <div class='text-success fw-bold'>!YOU FOUND AN ITEM!</div>
             <div><b>Name:</b> <span class='${equipment.category ?? ''}'>${equipment.name}</span></div>
@@ -174,8 +185,33 @@ export function generateItem(){
     log(itemDetails);
 }
 
+export function generateShop(){
+    if(!shopAppear){ 
+        randomEvent();
+        return;
+    }
+
+    shopAppear = false;
+    const [shopPool, shopContents] = buildShop();
+    const shopTable = shop.children[2];
+    shop.children[0].children[1].innerHTML = `${player.gold}g`
+    shopTable.children[1].children[1].innerHTML = shopContents.healing;
+    shopTable.children[4].children[1].innerHTML = shopContents.enchant;
+    shopTable.children[7].children[1].innerHTML = shopContents.boost;
+    
+    shopItems = shopPool;
+    sidebar.classList.add("show");
+    shop.classList.remove("d-none")
+    loadPurchasable(shopItems, player.gold);
+
+    const shopLog = `
+            <div class='text-primary fw-bold'>!You Encountered a Shop!</div>
+            <hr>`;
+    log(shopLog);
+}
+
 function randomEvent(){
-    const events = [generateEnemy, generateItem];
+    const events = [generateEnemy, generateItem, generateShop];
     const eventRand = Math.floor(Math.random() * events.length);
     const runEvent = events[eventRand];
     runEvent();
@@ -302,6 +338,18 @@ showInv.addEventListener('click', ()=>{
                             <td>${item.effect}: +${item.amount}</td>
                             <td><button class="btn btn-success btn-sm ${disabled}" data-itemid="${item.id}" id="useItem">Use ${item.qty}x</button></td>
                         </tr>`
+            }else if(item.type == "boost"){
+                const labelMap = {
+                    hp: "MaxHP (Base)",
+                    dmg: "dmg (Base)",
+                    weapon: "dmg (Weapon)",
+                    armor: "hp (Armor)",
+                }
+                itemRow = `<tr>
+                            <td class="text-start">${item.name}</td>
+                            <td>+${item.amount} ${labelMap[item.boost]}</td>
+                            <td><button class="btn btn-success btn-sm" data-itemid="${item.id}" id="useItem">Use ${item.qty}x</button></td>
+                        </tr>`
             }
             return itemRow;
         }).join('')
@@ -365,7 +413,8 @@ battleLog.addEventListener('click', function(e){
 
 //playerSummary
 name.addEventListener('click', function(){
-    playerSummary.classList.add("show");
+    sidebar.classList.add("show");
+    playerSummary.classList.remove("d-none");
     const playerTable = playerSummary.children[2];
     const statusTable = playerSummary.children[4];
     const equipWeaponTable = playerSummary.children[6];
@@ -411,8 +460,8 @@ name.addEventListener('click', function(){
                 <tr><td>Effects:</td><td colspan="2">${
                     !player.equipWeapon.effect ? `No Effects` : 
                     player.equipWeapon.effect.map(eff => {
-                        return `${eff.desc}` 
-                    }).join(`<br>`)
+                        return effectDesc(eff) 
+                    }).join(`<hr class='my-1'>`)
                 }</td></tr>
             </tbody>`;
     }else{
@@ -441,13 +490,35 @@ name.addEventListener('click', function(){
         tableContent += `<tbody><tr><td colspan='3'>Nothing Equiped</td></tr></tbody>`
     }
     equipArmorTable.innerHTML = tableContent;
-    
 })
-playerSummary.addEventListener("click", function(e){
-    if(e.target.id == "closeSummary"){
-        this.classList.remove("show")
+
+shop.addEventListener("click", function(e){
+    const target = e.target;
+    
+    if(target.classList.contains("buy")){
+        const itemId = target.dataset.id
+        const item = shopItems.find(item => item.id == itemId);
+        equip(player, item.type, item);
+
+        item.stock--;
+        player.gold -= item.price;
+        shop.children[0].children[1].innerHTML = `${player.gold}g`
+
+        loadPurchasable(shopItems, player.gold)
     }
 })
+
+
+sidebar.addEventListener("click", function(e){
+    if(e.target.id == "closeSummary"){
+        this.classList.remove("show");
+        playerSummary.classList.add("d-none");
+    }else if(e.target.id == "closeShop"){
+        this.classList.remove("show");
+        shop.classList.add("d-none");
+        setTimeout(randomEvent, 500)
+    }
+});
 //================ GAME FUNCTIONS ===========================//
 
 //================ UTILITY ===========================//
@@ -511,7 +582,7 @@ export function handleDefeatEnemy(enemy, player){
     skillBtn.classList.add("disabled")
     setTimeout(()=>{
         var slainLog = `
-        <div><b id="elog">${enemy.name}</b> has been defeated.</div><hr>`;
+        <div><b id="elog">${enemy.name}</b> has been defeated. Gained <span class='gold'>+${enemy.gold}g</span> gold</div><hr>`;
         score += 1;    
         log(slainLog);
         est.innerHTML = ''
@@ -584,6 +655,7 @@ function roundUpdate(){
     round++
     roundCounter.innerHTML = `Round: ${round}`
     if(round % 25 == 0) eStatIncrease++;
+    if(round % 10 == 0) shopAppear = true;
 }
 
 //Status tooltip

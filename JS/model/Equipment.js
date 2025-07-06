@@ -1,5 +1,5 @@
 import { updateEnemyHealthBar, updateHealthBar, updatePlayerDmgLabel } from "../controller.js";
-import { inflictStatus, probability } from "../repo/AbilityRepo.js";
+import { healthSteal, inflictStatus, probability } from "../repo/AbilityRepo.js";
 import { objStatus } from "../repo/StatusRepo.js";
 
 export const weapons = [
@@ -66,39 +66,42 @@ export const ultraWeapons = [
 ]
 
 export const consumables = [
-    {id: 1, name: "Small Healing Potion",   heal:50,  type: "heal", qty:1},
-    {id: 2, name: "Healing Potion",         heal:150, type: "heal", qty:1},
-    {id: 3, name: "Great Healing Potion",   heal:400, type: "heal", qty:1},
+    {id: 1, name: "Small Healing Potion", heal:50,  type: "heal", price: 5, qty:1},
+    {id: 2, name: "Healing Potion",       heal:150, type: "heal", price: 15, qty:1},
+    {id: 3, name: "Great Healing Potion", heal:400, type: "heal", price: 40, qty:1},
 ]
 
 export const enchantments = [
-    {id: 4, name: "Flames Enchant", effect: "Flames", amount:5 , type: "enchant", qty:1},
-    {id: 5, name: "Poison Enchant", effect: "Poison", amount:5 , type: "enchant", qty:1},
-    {id: 6, name: "LifeSteal Enchant", effect: "Lifesteal", amount:3 , type: "enchant", qty:1},
-    {id: 7, name: "Bleed Enchant", effect: "Bleed", amount: 4 , type: "enchant", qty:1},
-    {id: 8, name: "Healing Enchant", effect: "Heal", amount:10 , type: "enchant", qty:1},
-    {id: 9, name: "Strength Enchant", effect: "Strength", amount:5 , type: "enchant", qty:1},
-    {id: 10, name: "Lifebreak Enchant", effect: "Lifebreak", amount:2 , type: "enchant", qty:1},
+    {id: 4, name: "Flames Enchant",     effect: "Flames",    amount:5,  price: 20, type: "enchant", qty:1},
+    {id: 5, name: "Poison Enchant",     effect: "Poison",    amount:5,  price: 20, type: "enchant", qty:1},
+    {id: 6, name: "LifeSteal Enchant",  effect: "Lifesteal", amount:3,  price: 20, type: "enchant", qty:1},
+    {id: 7, name: "Bleed Enchant",      effect: "Bleed",     amount:4,  price: 20, type: "enchant", qty:1},
+    {id: 8, name: "Healing Enchant",    effect: "Heal",      amount:10, price: 20, type: "enchant", qty:1},
+    {id: 9, name: "Strength Enchant",   effect: "Strength",  amount:5,  price: 20, type: "enchant", qty:1},
+    {id: 10, name: "Lifebreak Enchant", effect: "Lifebreak", amount:2,  price: 20, type: "enchant", qty:1},
 ]
 export const enchantmentsII = [
-    {id: 11, name: "Flames Enchant II", effect: "Flames", amount:10 , type: "enchant", qty:1},
-    {id: 12, name: "Poison Enchant II", effect: "Poison", amount:10 , type: "enchant", qty:1},
-    {id: 13, name: "LifeSteal Enchant II", effect: "Lifesteal", amount:5 , type: "enchant", qty:1},
-    {id: 14, name: "Bleed Enchant II", effect: "Bleed", amount: 8 , type: "enchant", qty:1},
-    {id: 15, name: "Healing Enchant II", effect: "Heal", amount:15 , type: "enchant", qty:1},
-    {id: 16, name: "Strength Enchant II", effect: "Strength", amount:10 , type: "enchant", qty:1},
-    {id: 17, name: "Lifebreak Enchant II", effect: "Lifebreak", amount:4 , type: "enchant", qty:1},
+    {id: 11, name: "Flames Enchant II",     effect: "Flames",    amount:10, price: 50, type: "enchant", qty:1},
+    {id: 12, name: "Poison Enchant II",     effect: "Poison",    amount:10, price: 50, type: "enchant", qty:1},
+    {id: 13, name: "LifeSteal Enchant II",  effect: "Lifesteal", amount:5,  price: 50, type: "enchant", qty:1},
+    {id: 14, name: "Bleed Enchant II",      effect: "Bleed",     amount: 8, price: 50, type: "enchant", qty:1},
+    {id: 15, name: "Healing Enchant II",    effect: "Heal",      amount:15, price: 50, type: "enchant", qty:1},
+    {id: 16, name: "Strength Enchant II",   effect: "Strength",  amount:10, price: 50, type: "enchant", qty:1},
+    {id: 17, name: "Lifebreak Enchant II",  effect: "Lifebreak", amount:4,  price: 50, type: "enchant", qty:1},
 ]
 export const enchantmentsIII = [
-    {id: 18, name: "Flames Enchant III", effect: "Flames", amount:15 , type: "enchant", qty:1},
-    {id: 19, name: "Poison Enchant III", effect: "Poison", amount:15 , type: "enchant", qty:1},
-    {id: 20, name: "LifeSteal Enchant III", effect: "Lifesteal", amount:8 , type: "enchant", qty:1},
-    {id: 21, name: "Bleed Enchant III", effect: "Bleed", amount: 12 , type: "enchant", qty:1},
-    {id: 22, name: "Healing Enchant III", effect: "Heal", amount:20 , type: "enchant", qty:1},
-    {id: 23, name: "Strength Enchant III", effect: "Strength", amount:15 , type: "enchant", qty:1},
-    {id: 24, name: "Lifebreak Enchant III", effect: "Lifebreak", amount:6 , type: "enchant", qty:1},
+    {id: 18, name: "Flames Enchant III",    effect: "Flames",    amount:15, price: 100, type: "enchant", qty:1},
+    {id: 19, name: "Poison Enchant III",    effect: "Poison",    amount:15, price: 100, type: "enchant", qty:1},
+    {id: 20, name: "LifeSteal Enchant III", effect: "Lifesteal", amount:8,  price: 100, type: "enchant", qty:1},
+    {id: 21, name: "Bleed Enchant III",     effect: "Bleed",     amount: 12,price: 100, type: "enchant", qty:1},
+    {id: 22, name: "Healing Enchant III",   effect: "Heal",      amount:20, price: 100, type: "enchant", qty:1},
+    {id: 23, name: "Strength Enchant III",  effect: "Strength",  amount:15, price: 100, type: "enchant", qty:1},
+    {id: 24, name: "Lifebreak Enchant III", effect: "Lifebreak", amount:6,  price: 100, type: "enchant", qty:1},
 ]
-
+export const statEnhancer = [
+    {id: 25, name: "Life Shard", amount: 20, type: "boost", price: 20, boost: "hp", qty:1},
+    {id: 26, name: "Blade Shard", amount: 5, type: "boost", price: 10, boost: "dmg", qty:1},
+]
 //Enchant Items
 export function enchant(player, enchantment){
     const weaponEffects = player.equipWeapon.effect
@@ -191,6 +194,25 @@ export function procItemEffect(player, enemy){
         });
     }
     return extraDmgLbl;
+}
+
+export function effectDesc(effect){
+    const status = effect.status || {};
+
+    const descMap = {
+        heal: `Heal: ${effect.chance}% chance to heal <b class='hp'>${effect.amount}hp</b>`,
+        lifesteal: `Lifesteal: ${effect.percent}%`,
+        lifebreak: `Lifebreak: Deals ${effect.percent}%hp damage`,
+        healthsteal: `Healtsteal: Permanently gain enemy's ${effect.percent}% MaxHp on kill`,
+        damagegain: `DamageGain: Permanently gain enemy's ${effect.percent}%Dmg on kill`,
+        flames: `Flames: ${effect.chance}% chance to inflict ${status.burn ?? 0} burn dmg for ${status.duration} rounds`,
+        poison: `Poison: ${effect.chance}% chance to inflict ${status.poison ?? 0} poison dmg for ${status.duration} rounds`,
+        bleed: `Bleed: ${effect.chance}% chance to inflict ${status.bleed ?? 0} bleed dmg for ${status.duration} rounds`,
+        strength: `Strength: ${effect.chance}% chance to gain ${status.strength ?? 0} bonus dmg for ${status.duration} rounds`,
+    }
+    
+    const key = effect.name.toLowerCase();
+    return descMap[key];
 }
 
 //Item Effects
@@ -303,6 +325,7 @@ export const itemPool = {
         consumables[1],
         consumables[1],
         consumables[2],
+        ...statEnhancer,
     ],
     enchantment:[
         ...enchantments,

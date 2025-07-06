@@ -1,4 +1,4 @@
-import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyStatusLabel, updatePlayerStatusLabel } from "../controller.js";
+import { log, updateHealthBar, updateEnemyHealthBar, updateEnemyStatusLabel, updatePlayerStatusLabel, updatePlayerDmgLabel } from "../controller.js";
 import { enchant, procItemEffect } from "../model/Equipment.js";
 import * as Abilities from "./AbilityRepo.js";
 import {triggerStatus} from "./StatusRepo.js";
@@ -40,6 +40,35 @@ export function useItem(player, itemId){
             var enchantlog = `
                 <div><b>You</b> used ${item.name}, Your weapon now has increased <b>${item.effect} Effect</b>.</div><hr>`;    
             log(enchantlog);
+        }
+        else if(item.type == 'boost')
+        {
+            const boost = item.amount;
+            var stat;
+            if(item.boost == 'hp'){
+                if(item.percent){
+                    var percentBoost = player.maxhealth * (boost/100);
+                    player.maxhealth += percentBoost;
+                    player.curhealth += percentBoost;
+                }else{
+                    player.maxhealth += boost;
+                    player.curhealth += boost;
+                }
+                stat = "Max HP";
+                updateHealthBar(player);
+            }else{
+                if(item.percent){
+                    var percentBoost = player.damage * (boost/100);
+                    player.damage += percentBoost;
+                }else{
+                    player.damage += boost;
+                }
+                stat = "damage";
+                updatePlayerDmgLabel(player);
+            }
+            var boostlog = `
+                <div><b>You</b> used ${item.name}, Your ${stat} now has increased by <b>${boost}${item.percent ? '%' : ''}</b>.</div><hr>`;    
+            log(boostlog);
         }
         item.qty--;
         player.inventory = player.inventory.filter(item => item.qty != 0);
