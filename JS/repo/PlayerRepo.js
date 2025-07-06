@@ -47,7 +47,7 @@ export function useItem(player, itemId){
             var stat;
             if(item.boost == 'hp'){
                 if(item.percent){
-                    var percentBoost = player.maxhealth * (boost/100);
+                    var percentBoost = Math.round(player.maxhealth * (boost/100));
                     player.maxhealth += percentBoost;
                     player.curhealth += percentBoost;
                 }else{
@@ -58,7 +58,7 @@ export function useItem(player, itemId){
                 updateHealthBar(player);
             }else{
                 if(item.percent){
-                    var percentBoost = player.damage * (boost/100);
+                    var percentBoost = Math.round(player.damage * (boost/100));
                     player.damage += percentBoost;
                 }else{
                     player.damage += boost;

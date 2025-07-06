@@ -205,7 +205,7 @@ export function generateShop(){
     loadPurchasable(shopItems, player.gold);
 
     const shopLog = `
-            <div class='text-primary fw-bold'>!You Encountered a Shop!</div>
+            <div class='text-primary fw-bold'>!YOU ENCOUNTERED A SHOP!</div>
             <hr>`;
     log(shopLog);
 }
@@ -347,7 +347,7 @@ showInv.addEventListener('click', ()=>{
                 }
                 itemRow = `<tr>
                             <td class="text-start">${item.name}</td>
-                            <td>+${item.amount} ${labelMap[item.boost]}</td>
+                            <td>+${item.amount}${item.percent ? "%" : ''} ${labelMap[item.boost]}</td>
                             <td><button class="btn btn-success btn-sm" data-itemid="${item.id}" id="useItem">Use ${item.qty}x</button></td>
                         </tr>`
             }

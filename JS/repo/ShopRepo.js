@@ -12,7 +12,7 @@ function generateShopItems(){
         {id: 31, name: "Battle Script",  category:"exclusive", amount: 10,  price: 50,  type: "boost", stock:1, boost: "dmg", qty:1},
         {id: 32, name: "War Sprite",     category:"exclusive", amount: 20,  price: 100, type: "boost", stock:1, boost: "dmg", qty:1},
         {id: 33, name: "Exmachina",      category:"exclusive", amount: 100, price: 300, type: "boost", stock:1, boost: "dmg", qty:1},
-        {id: 34, name: "Foly Feather",   category:"exclusive", amount: 10,  price: 100, type: "boost", stock:1, boost: "dmg", percent: true, qty:1},
+        {id: 34, name: "Foly Feather",   category:"exclusive", amount: 10,  price: 100, type: "boost", stock:1, boost: "hp",  percent: true, qty:1},
         {id: 35, name: "Nova Fragment",  category:"exclusive", amount: 10,  price: 100, type: "boost", stock:1, boost: "dmg", percent: true, qty:1},
     ]
  
@@ -20,7 +20,7 @@ function generateShopItems(){
         items.forEach(item => {
             if(item.type == "heal") item.stock = 8;
             if(item.type == "enchant") item.stock = 3;
-            if(item.type == "boost") item.stock = 5;
+            if(item.type == "boost") item.stock = 2;
             shopItems.push(structuredClone(item));
         });
     }
@@ -48,7 +48,7 @@ function createShopBody(item){
             weapon: "dmg (Weapon)",
             armor: "hp (Armor)",
         }
-        label = `+${item.amount} ${labelMap[item.boost]}`
+        label = `+${item.amount}${item.percent ? "%" : ''} ${labelMap[item.boost]}`
     }
 
     return `<tr>
@@ -76,10 +76,10 @@ export function loadPurchasable(shopItems, playerGold){
         const item = shopItems.find(item => item.id == itemId);
 
         if(item.price > playerGold || item.stock <= 0){
-            btn.classList.add("disabled")
-            btn.classList.add("btn-danger")
+            btn.classList.add("disabled");
+            btn.classList.add("btn-danger");
             btn.classList.remove("btn-success");
-            btn.innerHTML = `(${item.stock}) Buy`
         }
+        btn.innerHTML = `(${item.stock}) Buy`;
     })
 }
